@@ -102,10 +102,10 @@ summary(vibi.combined.new.kmeans7.optsil)
     ## Number of clusters  =  7 
     ## 
     ##   1   2   3   4   5   6   7 
-    ## 131 157 123  45  58  41  88 
+    ##  58  41 123 131  88  45 157 
     ## 
     ## call     =  optsil.default(x = kmeans7_cluster, dist = vibi.combined.new.hell.dist) 
-    ## created  =  Wed Aug 10 14:53:49 2022
+    ## created  =  Fri Aug 12 10:28:29 2022
 
 ## Extract optsil results and combine with matrix
 
