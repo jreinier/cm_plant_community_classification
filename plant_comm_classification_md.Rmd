@@ -47,6 +47,7 @@ library(optpart)
 ```
 
 
+
 ## Query data
 
 ```{r query, include=TRUE}
