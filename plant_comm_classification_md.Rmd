@@ -2,7 +2,7 @@
 title: "Plant Community Classification"
 author: "John Reinier"
 date: "7/21/2022"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
