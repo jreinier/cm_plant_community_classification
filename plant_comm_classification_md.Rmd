@@ -46,14 +46,7 @@ library(dplyr)
 library(optpart)
 ```
 
-```{r conn, include=FALSE}
-##establish connection to database
-drv <- dbDriver("Postgres")
 
-#open the connection using user, passsword, etc., as
-conn <- dbConnect(drv, host="10.0.0.27", port="5432",
-                  dbname="NR_monitoring", user="jreinier", password="carex91308")
-```
 
 ## Query data
 
