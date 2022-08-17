@@ -1,5 +1,10 @@
 ---
 title: "Plant Community Classification"
+knit: (function(input_file, encoding) {
+    out_dir <- 'docs';
+    rmarkdown::render(input_file,
+      encoding=encoding,
+      output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 author: "John Reinier"
 date: "7/21/2022"
 output: html_document
@@ -7,11 +12,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-(function(input_file, encoding) {
-    out_dir <- 'docs';
-    rmarkdown::render(input_file,
-      encoding=encoding,
-      output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 
 ```
 
@@ -46,14 +46,6 @@ library(dplyr)
 library(optpart)
 ```
 
-```{r conn, include=FALSE}
-##establish connection to database
-drv <- dbDriver("Postgres")
-
-#open the connection using user, passsword, etc., as
-conn <- dbConnect(drv, host="10.0.0.27", port="5432",
-                  dbname="NR_monitoring", user="jreinier", password="carex91308")
-```
 
 ## Query data
 
