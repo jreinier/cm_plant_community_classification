@@ -12,7 +12,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 ```
 
 ## R Markdown
@@ -47,6 +46,22 @@ library(optpart)
 ```
 
 
+```{r , include=FALSE}
+drv <- dbDriver("Postgres")
+
+#open the connection using user, passsword, etc., as
+dw <- config::get("datawarehouse")
+
+conn <- DBI::dbConnect(odbc::odbc(),
+                      Driver = dw$driver,
+                      Server = dw$server,
+                      UID    = dw$uid,
+                      PWD    = dw$pwd,
+                      Port   = dw$port,
+                      Database = dw$database
+)
+```
+
 ## Query data
 
 ```{r query, include=TRUE}
@@ -70,6 +85,7 @@ ncol(vibi.combined.matrix.new)
 ```{r ,include=TRUE}
 vibi.combined.matrix.new[is.na(vibi.combined.matrix.new)] <- 0
 ```
+
 ## Apply Hellinger standardization and create euclidean distance matrix
 
 ```{r ,include=TRUE}
@@ -88,10 +104,42 @@ This (above) is called the Hellinger transformation.  The Euclidian distance fun
 </div>
 
 
+## Try some hierarchical clustering
+## Ward's minimum variance clustering using Hellinger distance matrix
+```{r ,include=TRUE}
+vibi.combined.new.clust.ward.hell <- hclust(vibi.combined.new.hell.dist, method = "ward.D")
+```
+
+
+## Cut the dendrogram at 8 groups
+```{r ,include=TRUE}
+vibi.combined.cl.groups = cutree(vibi.combined.new.clust.ward.hell, k=8)
+```
+
+
+## Silhouette plot of the final partition
+```{r ,include=TRUE}
+k <- 8
+cutg <- cutree(vibi.combined.new.clust.ward.hell, k=k)
+sil <- silhouette(cutg, vibi.combined.new.hell.dist)
+rownames(sil) <- row.names(vibi.combined.matrix.new)
+dev.new(title="Silhouette plot - Ward - k=8")
+plot(sil, main="Silhouette plot - Hellinger - Ward", 
+      cex.names=0.8, col=2:(k+1), nmax=100)
+```
+
+
+```{r ,include=TRUE}
+source("hcoplot.R")
+hcoplot(vibi.combined.new.clust.ward.hell, vibi.combined.new.hell.dist, k=8)
+```
+
+
 ## k-means clustering with 7 groups
 ```{r ,include=TRUE}
 vibi.combined.new.kmeans7 <- kmeans(vibi.combined.new.hell, centers=7, nstart=100)
 ```
+
 
 ```{r ,include=FALSE}
 vibi.combined.new.kmeans7$cluster
