@@ -49,7 +49,7 @@ library(optpart)
 ```{r , include=FALSE}
 drv <- dbDriver("Postgres")
 
-#open the connection using user, passsword, etc., as
+#open the connection
 dw <- config::get("datawarehouse")
 
 conn <- DBI::dbConnect(odbc::odbc(),
@@ -64,17 +64,17 @@ conn <- DBI::dbConnect(odbc::odbc(),
 
 ## Query data
 
-```{r query, include=TRUE}
+```{r query, include=TRUE, eval=FALSE}
 vibi.combined.new <- dbGetQuery(conn, "SELECT * FROM nr_misc.plot_data_for_veg_comm_analysis_newest_sample;")
 ```
 
 ## Reshape into site X species matrix
 
-```{r cast, include=TRUE}
+```{r cast, include=TRUE, eval=FALSE}
 vibi.combined.matrix.new <- cast(vibi.combined.new, plot_id ~ acronym, value='abundance', fun="mean")
 ```
 
-```{r , include=FALSE}
+```{r , include=FALSE, eval=FALSE}
 row.names(vibi.combined.matrix.new) <- vibi.combined.matrix.new[ ,1]
 names(vibi.combined.matrix.new)
 nrow(vibi.combined.matrix.new)
@@ -82,13 +82,13 @@ ncol(vibi.combined.matrix.new)
 ```
 
 ## Change NULLS to 0
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.combined.matrix.new[is.na(vibi.combined.matrix.new)] <- 0
 ```
 
 ## Apply Hellinger standardization and create euclidean distance matrix
 
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.hell <- decostand(vibi.combined.matrix.new, "hel", margin = 1)
 vibi.combined.new.hell.dist <- vegdist(vibi.combined.new.hell, "euc")
 ```
@@ -106,19 +106,25 @@ This (above) is called the Hellinger transformation.  The Euclidian distance fun
 
 ## Try some hierarchical clustering
 ## Ward's minimum variance clustering using Hellinger distance matrix
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.clust.ward.hell <- hclust(vibi.combined.new.hell.dist, method = "ward.D")
 ```
 
 
 ## Cut the dendrogram at 8 groups
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.combined.cl.groups = cutree(vibi.combined.new.clust.ward.hell, k=8)
 ```
 
 
+```{r ,include=TRUE, eval=FALSE}
+source("hcoplot.R")
+hcoplot(vibi.combined.new.clust.ward.hell, vibi.combined.new.hell.dist, k=8)
+```
+
+
 ## Silhouette plot of the final partition
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 k <- 8
 cutg <- cutree(vibi.combined.new.clust.ward.hell, k=k)
 sil <- silhouette(cutg, vibi.combined.new.hell.dist)
@@ -129,24 +135,18 @@ plot(sil, main="Silhouette plot - Hellinger - Ward",
 ```
 
 
-```{r ,include=TRUE}
-source("hcoplot.R")
-hcoplot(vibi.combined.new.clust.ward.hell, vibi.combined.new.hell.dist, k=8)
-```
-
-
 ## k-means clustering with 7 groups
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.kmeans7 <- kmeans(vibi.combined.new.hell, centers=7, nstart=100)
 ```
 
 
-```{r ,include=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 vibi.combined.new.kmeans7$cluster
 ```
 
 
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.kmeans7.indval.out = indval(vibi.combined.matrix.new[,c(-1,-647)], vibi.combined.new.kmeans7$cluster, numitr=10000)
 
 vibi.new.kmeans7.gr <- vibi.combined.new.kmeans7.indval.out$maxcls[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
@@ -163,7 +163,7 @@ write.csv(vibi.new.kmeans7.fidg, file="vibi_new_indval_kmeans7_results_07222022.
 ```
 
 ## Combine k-means clusters (7 groups) with site X spp matrix
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 kmeans7_cluster <- vibi.combined.new.kmeans7$cluster
 vibi.new.kmeans7.cluster <- cbind(vibi.combined.matrix.new, kmeans7_cluster)
 ```
@@ -174,56 +174,20 @@ write.csv(vibi.new.kmeans7.cluster, file="vibi_new_cluster_kmeans7_results_04182
 ```
 
 
-## Try optsil function on k-means result from above
-```{r ,include=TRUE}
-vibi.combined.new.kmeans7.optsil <- optsil(kmeans7_cluster, vibi.combined.new.hell.dist)
-summary(vibi.combined.new.kmeans7.optsil)
-```
-
-
-## Extract optsil results and combine with matrix
-```{r ,include=FALSE}
-vibi.combined.new.kmeans7.optsil$clustering
-kmeans7_optsil_cluster <- vibi.combined.new.kmeans7.optsil$clustering 
-vibi.new.kmeans7.optsil.cluster <- cbind(vibi.combined.matrix.new, kmeans7_optsil_cluster)
-```
-
-## Write optsil results to csv  **NOT RUN
-```{r ,include=TRUE, eval=FALSE}
-write.csv(vibi.new.kmeans7.optsil.cluster, file="vibi_new_cluster_kmeans7_optsil_results_04182022.csv")
-```
-
-```{r ,include=TRUE}
-vibi.new.kmeans7.optsil.indval.out = indval(vibi.combined.matrix.new[,c(-1,-647)], vibi.combined.new.kmeans7.optsil$clustering, numitr=10000)
-
-vibi.new.kmeans7.optsil.gr <- vibi.new.kmeans7.optsil.indval.out$maxcls[vibi.new.kmeans7.optsil.indval.out$pval <= 0.05]
-vibi.new.kmeans7.optsil.iv <- vibi.new.kmeans7.optsil.indval.out$indcls[vibi.new.kmeans7.optsil.indval.out$pval <= 0.05]
-vibi.new.kmeans7.optsil.pv <- vibi.new.kmeans7.optsil.indval.out$pval[vibi.new.kmeans7.optsil.indval.out$pval <= 0.05]
-vibi.new.kmeans7.optsil.fr <- apply(vibi.combined.matrix.new[,c(-1,-647)] > 0, 2, sum)[vibi.new.kmeans7.optsil.indval.out$pval <= 0.05]
-vibi.new.kmeans7.optsil.fidg <- data.frame(group=vibi.new.kmeans7.optsil.gr, indval=vibi.new.kmeans7.optsil.iv, pvalue=vibi.new.kmeans7.optsil.pv, freq=vibi.new.kmeans7.optsil.fr)
-vibi.new.kmeans7.optsil.fidg <- vibi.new.kmeans7.optsil.fidg[order(vibi.new.kmeans7.optsil.fidg$group, -vibi.new.kmeans7.optsil.fidg$indval),]
-```
-
-## Write Indval results from optsil groups to csv  **NOT RUN
-```{r ,include=TRUE, eval=FALSE}
-write.csv(vibi.new.kmeans7.optsil.fidg, file="vibi_new_indval_kmeans7_optsil_results_04182022.csv")
-```
-
-
 ## Run analyses above just on "Ruderal Wet-Mesic Thicket..." type to try and break out subtypes
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.new.thicket <- dbGetQuery(conn, "SELECT * FROM nr_misc.plot_data_for_veg_comm_analysis_newest_sample
-WHERE plot_id IN (SELECT plot_id FROM nr_misc.plot_data_for_upland_vibi_development WHERE group_description = 'Ruderal Wet-Mesic Shrubland and Thicket');")
+WHERE plot_id IN (SELECT plot_id FROM nr_misc.vibi_new_cluster_kmeans7_optsil_results_08242022 WHERE kmeans7_optsil_cluster = 4);")
 ```
 
 
 ## Reshape into site X species matrix
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.matrix.new.thicket <- cast(vibi.new.thicket, plot_id ~ acronym, value='abundance', fun="mean")
 ```
 
 
-```{r ,include=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 row.names(vibi.matrix.new.thicket) <- vibi.matrix.new.thicket[ ,1]
 names(vibi.matrix.new.thicket)
 nrow(vibi.matrix.new.thicket)
@@ -232,12 +196,12 @@ ncol(vibi.matrix.new.thicket)
 
 
 ## Change NAs to 0
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.matrix.new.thicket[is.na(vibi.matrix.new.thicket)] <- 0
 ```
 
 
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 ##Hellinger standardization and euclidean distance matrix
 vibi.matrix.new.thicket.hell <- decostand(vibi.matrix.new.thicket, "hel", margin = 1)
 vibi.matrix.new.thicket.hell.dist <- vegdist(vibi.matrix.new.thicket.hell, "euc")
@@ -245,13 +209,13 @@ vibi.matrix.new.thicket.hell.dist <- vegdist(vibi.matrix.new.thicket.hell, "euc"
 
 
 ## K-means clustering
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.new.thicket.hell.dist.kmeans2 <- kmeans(vibi.matrix.new.thicket.hell, centers=2, nstart=100)
 ```
 
 
 ## Run indicator species analysis on k-means clusters
-```{r ,include=TRUE}
+```{r ,include=TRUE, eval=FALSE}
 vibi.new.thicket.kmeans2.indval.out = indval(vibi.matrix.new.thicket[,c(-1)], vibi.new.thicket.hell.dist.kmeans2$cluster, numitr=10000)
 
 vibi.new.thicket.kmeans2.gr <- vibi.new.thicket.kmeans2.indval.out$maxcls[vibi.new.thicket.kmeans2.indval.out$pval <= 0.05]
@@ -270,7 +234,7 @@ write.csv(vibi.new.thicket.kmeans2.fidg, file="vibi_new_thicket_indval_kmeans2_r
 
 
 ## Combine K-means clusters with plot matrix
-```{r ,include=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 kmeans2_thicket_cluster <- vibi.new.thicket.hell.dist.kmeans2$cluster
 vibi.new.thicket.kmeans2.cluster <- cbind(vibi.matrix.new.thicket, kmeans2_thicket_cluster)
 ```
@@ -281,39 +245,28 @@ write.csv(vibi.new.thicket.kmeans2.cluster, file="vibi_new_thicket_kmeans2_resul
 ```
 
 
-## Run optsil function on K-means result from above
-```{r ,include=TRUE}
-vibi.new.thicket.kmeans2.optsil <- optsil(kmeans2_thicket_cluster, vibi.matrix.new.thicket.hell.dist)
-```
-
-
-## Combine cluster results from meadow analysis with spp matrix
-```{r ,include=TRUE}
-kmeans2_thicket_optsil_cluster <- vibi.new.thicket.kmeans2.optsil$clustering 
-vibi.new.thicket.kmeans2.optsil.cluster <- cbind(vibi.matrix.new.thicket, kmeans2_thicket_optsil_cluster)
-```
-
-
+## Try NMDS ordination
+## NMDS
 ```{r ,include=TRUE, eval=FALSE}
-write.csv(vibi.new.thicket.kmeans2.optsil.cluster, file="vibi_new_thicket_kmeans2_optsil_results_04192022.csv")
-```
-
- 
-## Run indicator species analysis on K-means + optsil results
-```{r ,include=TRUE}
-vibi.new.thicket.kmeans2.optsil.indval.out = indval(vibi.matrix.new.thicket[,c(-1)], vibi.new.thicket.kmeans2.optsil$clustering, numitr=10000)
-
-vibi.new.thicket.kmeans2.optsil.gr <- vibi.new.thicket.kmeans2.optsil.indval.out$maxcls[vibi.new.thicket.kmeans2.optsil.indval.out$pval <= 0.05]
-vibi.new.thicket.kmeans2.optsil.iv <- vibi.new.thicket.kmeans2.optsil.indval.out$indcls[vibi.new.thicket.kmeans2.optsil.indval.out$pval <= 0.05]
-vibi.new.thicket.kmeans2.optsil.pv <- vibi.new.thicket.kmeans2.optsil.indval.out$pval[vibi.new.thicket.kmeans2.optsil.indval.out$pval <= 0.05]
-vibi.new.thicket.kmeans2.optsil.fr <- apply(vibi.matrix.new.thicket[,c(-1)] > 0, 2, sum)[vibi.new.thicket.kmeans2.optsil.indval.out$pval <= 0.05]
-vibi.new.thicket.kmeans2.optsil.fidg <- data.frame(group=vibi.new.thicket.kmeans2.optsil.gr, indval=vibi.new.thicket.kmeans2.optsil.iv, pvalue=vibi.new.thicket.kmeans2.optsil.pv, freq=vibi.new.thicket.kmeans2.optsil.fr)
-vibi.new.thicket.kmeans2.optsil.fidg <- vibi.new.thicket.kmeans2.optsil.fidg[order(vibi.new.thicket.kmeans2.optsil.fidg$group, -vibi.new.thicket.kmeans2.optsil.fidg$indval),]
+vibi.new.comm <- dbGetQuery(conn, "SELECT plot_id, kmeans7_optsil_cluster FROM nr_misc.vibi_new_cluster_kmeans7_optsil_results_09012022;")
+vibi.new.combined.nmds <- metaMDS(vibi.combined.new.hell, k = 2, try = 50, trymax = 50, autotransform=F)
+row.names(vibi.new.comm) <- vibi.new.comm[,1]
+vibi.new.groups <- merge(vibi.combined.new.hell, vibi.new.comm, by="row.names")
+vibi.new.groups <- vibi.new.groups[,c(-895)]
+names(vibi.new.groups)[1] <- "plot_id"
 ```
 
 
+## get levels from random forests groups
 ```{r ,include=TRUE, eval=FALSE}
-write.csv(vibi.new.thicket.kmeans2.optsil.fidg, file="vibi_new_thicket_indval_kmeans2_optsil_results_04192022.csv")
+vibi.new.grp.lev <- factor(vibi.new.groups$kmeans7_optsil_cluster)
+col <- c("red", "blue", "green", "purple", "orange", "yellow", "pink", "brown")
+sit.sc <- scores(vibi.new.combined.nmds, display="sites")
+p <- ordiplot(vibi.new.combined.nmds, type="none", main="NMDS Plot with Community Colors", choices=c(1,2))
+points(sit.sc, pch=20, cex=0.8, col=col[vibi.new.grp.lev], bg=col[vibi.new.grp.lev])
+ordiellipse(vibi.new.combined.nmds, vibi.new.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
 ```
+![an image caption Source: Ultimate Funny Dog Videos Compilation 2013.](comm_nmds_plot.png)
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
