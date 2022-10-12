@@ -331,4 +331,36 @@ kable(my_tbl_smtree, digits = 3, row.names = FALSE, align = "c",
 ```
 
 
+### Shrub Species Synoptic Table
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+my_tbl_shrubs <- tibble::tribble(
+  ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
+       "VIBACE",       45,     0.01,        2,        0,        0,        0,       69,     0.02,        2,     0.01,       20,     0.01,       16,     0.01,        0,        0,
+       "FRAALN",       41,     0.01,       41,     0.01,       40,     0.01,       69,     0.01,       80,     0.06,       58,     0.02,       81,     0.03,       62,     0.05,
+       "RUBALL",       19,     0.01,        4,        0,       21,     0.02,       28,     0.02,       19,     0.01,       20,     0.02,       24,     0.01,       10,     0.02,
+       "LONMAA",       11,     0.01,       54,     0.05,       13,        0,       15,     0.01,       48,     0.02,       31,     0.02,       32,     0.01,       25,     0.17,
+       "ROSCAR",        1,     0.01,        0,        0,        0,        0,        4,     0.01,        2,     0.02,        1,     0.01,        2,     0.01,        5,     0.01,
+       "RUBODO",        1,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,
+       "CORDRU",        0,        0,        5,        0,        0,        0,        0,        0,        3,     0.01,        0,        0,        0,        0,        0,        0,
+       "ROSSET",        0,        0,        2,        0,        4,     0.01,        0,        0,       11,     0.01,        2,        0,        2,     0.01,        5,     0.01,
+       "EUOEUR",        0,        0,        2,        0,        0,        0,        4,     0.01,        2,        0,        3,        0,        0,        0,        0,        0,
+       "ILEVER",        0,        0,        2,        0,        0,        0,        1,     0.01,        0,        0,        0,        0,        6,     0.01,        0,        0,
+       "RIBAME",        0,        0,        2,        0,        0,        0,        0,        0,        3,        0,        3,     0.01,        2,        0,        5,        0,
+       "HYPPRO",        0,        0,        2,     0.01,        0,        0,        0,        0,        2,        0,        0,        0,        6,     0.02,        0,        0,
+       "FORINT",        0,        0,        2,        0,        0,        0,        0,        0,        0,        0,        1,     0.05,        0,        0,        0,        0,
+       "VACPAL",        0,        0,        0,        0,        0,        0,       12,     0.01,        0,        0,        1,        0,        5,     0.01,        0,        0,
+       "GAUPRO",        0,        0,        0,        0,        0,        0,        5,     0.01,        0,        0,        0,        0,        1,        0,        0,        0,
+       "TAXCAN",        0,        0,        0,        0,        0,        0,        1,     0.01,        0,        0,        0,        0,        0,        0,        0,        0,
+       "VIBLEN",        0,        0,        0,        0,        0,        0,        0,        0,        2,     0.03,        4,     0.01,        4,     0.04,        3,     0.02,
+       "RUBLAC",        0,        0,        0,        0,        0,        0,        0,        0,        2,        0,        0,        0,        0,        0,        0,        0,
+       "SAMRAC",        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        1,     0.01,        0,        0,        0,        0
+  )
+
+require(knitr)
+kable(my_tbl_shrubs, digits = 3, row.names = FALSE, align = "c",
+              caption = NULL)
+
+
+```
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
