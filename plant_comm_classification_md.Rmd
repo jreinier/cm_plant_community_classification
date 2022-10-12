@@ -393,4 +393,5 @@ kable(my_tbl_vines, digits = 3, row.names = FALSE, align = "c",
 
 ```
 
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
