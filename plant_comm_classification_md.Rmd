@@ -270,7 +270,7 @@ ordiellipse(vibi.new.combined.nmds, vibi.new.grp.lev, kind = "sd", conf=0.80, lw
 
 ### Tree Species Synoptic Table
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
-my_tbl <- tibble::tribble(
+my_tbl_trees <- tibble::tribble(
   ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
     "STNDEAD_1",       99,     0.34,       95,     0.32,       19,     0.23,      100,     0.33,      100,     0.43,       99,     0.33,      100,     0.37,      100,     0.43,
      "FAGGRA_1",       99,     0.52,        2,     0.07,        0,        0,       98,     0.33,       11,     0.07,       46,     0.14,       50,     0.14,        0,        0,
@@ -307,15 +307,16 @@ my_tbl <- tibble::tribble(
   )
 
 require(knitr)
-kable(my_tbl, digits = 3, row.names = FALSE, align = "c",
+kable(my_tbl_trees, digits = 3, row.names = FALSE, align = "c",
               caption = NULL)
+
 
 ```
 
 
 ### Small Tree Species Synoptic Table
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
-my_tbl_smtree <- tibble::tribble(
+my_tbl_smtrees <- tibble::tribble(
   ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
        "CRPCAR",       47,     0.02,        4,     0.01,        2,        0,       60,     0.04,       20,     0.03,       52,     0.02,       35,     0.03,        0,        0,
        "PRUVIR",        2,        0,        9,     0.01,        0,        0,       12,     0.03,        3,        0,       16,     0.04,       10,     0.02,        0,        0,
@@ -325,8 +326,9 @@ my_tbl_smtree <- tibble::tribble(
   )
 
 require(knitr)
-kable(my_tbl_smtree, digits = 3, row.names = FALSE, align = "c",
+kable(my_tbl_smtrees, digits = 3, row.names = FALSE, align = "c",
               caption = NULL)
+
 
 ```
 
@@ -362,5 +364,34 @@ kable(my_tbl_shrubs, digits = 3, row.names = FALSE, align = "c",
 
 
 ```
+
+
+### Woody Vine Species Synoptic Table
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+my_tbl_vines <- tibble::tribble(
+  ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
+       "SMXHIS",       20,     0.01,        5,     0.01,        0,        0,       11,        0,        3,        0,       26,     0.01,        3,     0.02,        0,        0,
+       "EUOFOR",        3,     0.02,       16,     0.01,        0,        0,        1,     0.01,       12,     0.01,        7,        0,        5,     0.01,        0,        0,
+       "LONJAP",        2,        0,       16,     0.01,        4,     0.01,        6,     0.02,       20,     0.01,        9,     0.01,       15,     0.03,       12,     0.01,
+       "LONDIO",        1,     0.01,        0,        0,        0,        0,       14,        0,        0,        0,        5,     0.01,        1,     0.01,        0,        0,
+       "FALSCA",        0,        0,        4,        0,        6,        0,        0,        0,        0,        0,        0,        0,        0,        0,        3,     0.01,
+       "SICANG",        0,        0,        4,     0.01,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,
+       "VITLAB",        0,        0,        2,        0,        0,        0,        1,        0,        5,     0.01,        1,     0.01,        5,     0.02,        3,        0
+  )
+
+require(knitr)
+kable(my_tbl_vines, digits = 3, row.names = FALSE, align = "c",
+              caption = NULL)
+
+
+```
+
+
+### Herbaceous Species Synoptic Table
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
+
+
+```
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
