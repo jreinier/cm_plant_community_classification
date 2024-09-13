@@ -1,13 +1,18 @@
 ---
-title: "Plant Community Classification"
+title: "Plant Community Classification in Cleveland Metroparks Using Plot-Based Vegetation Monitoring Data"
 knit: (function(input_file, encoding) {
     out_dir <- 'docs';
     rmarkdown::render(input_file,
       encoding=encoding,
       output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
-author: "John Reinier"
-date: "7/21/2022"
-output: html_document
+author: "Author: John Reinier"
+date: "Last Updated: `r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+    theme: journal
 ---
 
 ```{r setup, include=FALSE}
@@ -40,49 +45,34 @@ library(dplyr)
 library(optpart)
 ```
 
+# Abstract
 
-```{r , include=FALSE}
-drv <- dbDriver("Postgres")
+# Introduction
 
-#open the connection
-dw <- config::get("datawarehouse")
+# Methods
 
-conn <- DBI::dbConnect(odbc::odbc(),
-                      Driver = dw$driver,
-                      Server = dw$server,
-                      UID    = dw$uid,
-                      PWD    = dw$pwd,
-                      Port   = dw$port,
-                      Database = dw$database
-)
-```
+## Study Area
 
-## Query data
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/study_area_map.png)
 
+## Data Collection
+
+#### Describe and reference sampling methods (Carolina Vegetation Survey, VIBI, PCAP)
+
+
+## Statistical Analyses
+
+
+#### Query data and create site X species matrix
 ```{r query, include=TRUE, eval=FALSE}
 vibi.combined.new <- dbGetQuery(conn, "SELECT * FROM nr_misc.plot_data_for_veg_comm_analysis_newest_sample;")
-```
-
-## Reshape into site X species matrix
-
-```{r cast, include=TRUE, eval=FALSE}
 vibi.combined.matrix.new <- cast(vibi.combined.new, plot_id ~ acronym, value='abundance', fun="mean")
-```
-
-```{r , include=FALSE, eval=FALSE}
 row.names(vibi.combined.matrix.new) <- vibi.combined.matrix.new[ ,1]
-names(vibi.combined.matrix.new)
-nrow(vibi.combined.matrix.new)
-ncol(vibi.combined.matrix.new)
-```
-
-## Change NULLS to 0
-```{r ,include=TRUE, eval=FALSE}
 vibi.combined.matrix.new[is.na(vibi.combined.matrix.new)] <- 0
 ```
 
-## Apply Hellinger standardization and create euclidean distance matrix
 
+#### Apply Hellinger transformation and calculate euclidean distance matrix
 ```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.hell <- decostand(vibi.combined.matrix.new, "hel", margin = 1)
 vibi.combined.new.hell.dist <- vegdist(vibi.combined.new.hell, "euc")
@@ -98,16 +88,23 @@ This (above) is called the Hellinger transformation.  The Euclidian distance fun
 </span>
 </div>
 
+### Hierarchical Clustering (Exploratory)
+### K-means Partitioning
+### Indicator Species Analysis
+### Nonmetric Multidimensional Scaling (NMDS)
 
-## Try some hierarchical clustering
-## Ward's minimum variance clustering using Hellinger distance matrix
+# Results
+
+### Hierarchical Clustering
 ```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.clust.ward.hell <- hclust(vibi.combined.new.hell.dist, method = "ward.D")
+plot(vibi.combined.new.clust.ward.hell)
 ```
 
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/basic_cluster_dendro.png)
 
-## Cut the dendrogram at 8 groups
 ```{r ,include=TRUE, eval=FALSE}
+## Cut the dendrogram at 8 groups
 vibi.combined.cl.groups = cutree(vibi.combined.new.clust.ward.hell, k=8)
 ```
 
@@ -118,8 +115,10 @@ hcoplot(vibi.combined.new.clust.ward.hell, vibi.combined.new.hell.dist, k=8)
 ```
 
 
-## Silhouette plot of the final partition
-```{r ,include=TRUE, eval=FALSE}
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/dendro_hcopot.png)
+
+#### Consider looking at silhouette plot of the final partition
+```{r ,include=FALSE, eval=FALSE}
 k <- 8
 cutg <- cutree(vibi.combined.new.clust.ward.hell, k=k)
 sil <- silhouette(cutg, vibi.combined.new.hell.dist)
@@ -130,140 +129,123 @@ plot(sil, main="Silhouette plot - Hellinger - Ward",
 ```
 
 
-## k-means clustering with 7 groups
+## K-means Partitioning
 ```{r ,include=TRUE, eval=FALSE}
-vibi.combined.new.kmeans7 <- kmeans(vibi.combined.new.hell, centers=7, nstart=100)
+vibi.combined.new.kmeans7 <- kmeans(vibi.combined.new.hell.dist, centers=7, nstart=100)
+summary(vibi.combined.new.kmeans7)
 ```
 
-
-```{r ,include=FALSE, eval=FALSE}
-vibi.combined.new.kmeans7$cluster
-```
-
-
-```{r ,include=TRUE, eval=FALSE}
-vibi.combined.new.kmeans7.indval.out = indval(vibi.combined.matrix.new[,c(-1,-647)], vibi.combined.new.kmeans7$cluster, numitr=10000)
-
-vibi.new.kmeans7.gr <- vibi.combined.new.kmeans7.indval.out$maxcls[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
-vibi.new.kmeans7.iv <- vibi.combined.new.kmeans7.indval.out$indcls[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
-vibi.new.kmeans7.pv <- vibi.combined.new.kmeans7.indval.out$pval[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
-vibi.new.kmeans7.fr <- apply(vibi.combined.matrix.new[,c(-1,-647)] > 0, 2, sum)[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
-vibi.new.kmeans7.fidg <- data.frame(group=vibi.new.kmeans7.gr, indval=vibi.new.kmeans7.iv, pvalue=vibi.new.kmeans7.pv, freq=vibi.new.kmeans7.fr)
-vibi.new.kmeans7.fidg <- vibi.new.kmeans7.fidg[order(vibi.new.kmeans7.fidg$group, -vibi.new.kmeans7.fidg$indval),]
-```
-
-## Write IndVal results to csv  **NOT RUN
-```{r ,include=TRUE, eval=FALSE}
-write.csv(vibi.new.kmeans7.fidg, file="vibi_new_indval_kmeans7_results_07222022.csv")
-```
-
-## Combine k-means clusters (7 groups) with site X spp matrix
+#### Combine k-means clusters with plot matrix
 ```{r ,include=TRUE, eval=FALSE}
 kmeans7_cluster <- vibi.combined.new.kmeans7$cluster
 vibi.new.kmeans7.cluster <- cbind(vibi.combined.matrix.new, kmeans7_cluster)
 ```
 
-## Write matrix w/ group assignment to csv  **NOT RUN
-```{r ,include=TRUE, eval=FALSE}
-write.csv(vibi.new.kmeans7.cluster, file="vibi_new_cluster_kmeans7_results_04182022.csv")
+```{r ,include=FALSE, eval=FALSE}
+write.csv(vibi.new.kmeans7.cluster, file="vibi_combined_new_kmeans7_results_09112024.csv", row.names = FALSE)
 ```
 
-
-## Run analyses above just on "Ruderal Wet-Mesic Thicket..." type to try and break out subtypes
+## Indicator Species Analysis 
 ```{r ,include=TRUE, eval=FALSE}
-vibi.new.thicket <- dbGetQuery(conn, "SELECT * FROM nr_misc.plot_data_for_veg_comm_analysis_newest_sample
-WHERE plot_id IN (SELECT plot_id FROM nr_misc.vibi_new_cluster_kmeans7_optsil_results_08242022 WHERE kmeans7_optsil_cluster = 4);")
-```
-
-
-## Reshape into site X species matrix
-```{r ,include=TRUE, eval=FALSE}
-vibi.matrix.new.thicket <- cast(vibi.new.thicket, plot_id ~ acronym, value='abundance', fun="mean")
+vibi.combined.new.kmeans7.indval.out = indval(vibi.combined.matrix.new[,c(-1)], vibi.combined.new.kmeans7$cluster, numitr=10000)
+vibi.new.kmeans7.gr <- vibi.combined.new.kmeans7.indval.out$maxcls[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
+vibi.new.kmeans7.iv <- vibi.combined.new.kmeans7.indval.out$indcls[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
+vibi.new.kmeans7.pv <- vibi.combined.new.kmeans7.indval.out$pval[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
+vibi.new.kmeans7.fr <- apply(vibi.combined.matrix.new[,c(-1)] > 0, 2, sum)[vibi.combined.new.kmeans7.indval.out$pval <= 0.05]
+vibi.new.kmeans7.fidg <- data.frame(group=vibi.new.kmeans7.gr, indval=vibi.new.kmeans7.iv, pvalue=vibi.new.kmeans7.pv, freq=vibi.new.kmeans7.fr)
+vibi.new.kmeans7.fidg <- vibi.new.kmeans7.fidg[order(vibi.new.kmeans7.fidg$group, -vibi.new.kmeans7.fidg$indval),]
 ```
 
 
 ```{r ,include=FALSE, eval=FALSE}
-row.names(vibi.matrix.new.thicket) <- vibi.matrix.new.thicket[ ,1]
-names(vibi.matrix.new.thicket)
-nrow(vibi.matrix.new.thicket)
-ncol(vibi.matrix.new.thicket)
+write.csv(vibi.new.kmeans7.fidg, file="vibi_new_indval_kmeans7_results_09112024.csv")
 ```
 
-
-## Change NAs to 0
+## NMDS ordination
 ```{r ,include=TRUE, eval=FALSE}
-vibi.matrix.new.thicket[is.na(vibi.matrix.new.thicket)] <- 0
+vibi.combined.new.nmds <- metaMDS(vibi.combined.new.hell.dist, k = 2, try = 50, trymax = 100, autotransform=F)
 ```
 
-
+#### Let's plot it and see how the groups look
 ```{r ,include=TRUE, eval=FALSE}
-##Hellinger standardization and euclidean distance matrix
-vibi.matrix.new.thicket.hell <- decostand(vibi.matrix.new.thicket, "hel", margin = 1)
-vibi.matrix.new.thicket.hell.dist <- vegdist(vibi.matrix.new.thicket.hell, "euc")
+vibi.combined.new.grp.lev <- factor(vibi.new.kmeans7.cluster$kmeans7_cluster)
+col <- c("red", "blue", "green", "purple", "orange", "yellow", "pink")
+sit.sc <- vegan::scores(vibi.combined.new.nmds, display="sites")
+p <- ordiplot(vibi.combined.new.nmds, type="none", main="NMDS Plot with Community Colors", choices=c(1,2))
+points(sit.sc, pch=20, cex=0.8, col=col[vibi.combined.new.grp.lev], bg=col[vibi.combined.new.grp.lev])
+ordiellipse(vibi.combined.new.nmds, vibi.combined.new.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
+leg.txt <- c("Beech – Mixed Hardwood (Hemlock)", "Sugar Maple – Mixed Hardwood", "Ruderal Shrubland", "Wet-Mesic Red Maple", "Oak – Mixed Hardwood", "Ruderal Meadow and Marsh", "Bottomland Forest")
+
+legend("topright", leg.txt, 
+       pch=20, col=col[], pt.cex=0.75, cex=0.50)
 ```
 
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_all_plots.png)
 
-## K-means clustering
-```{r ,include=TRUE, eval=FALSE}
-vibi.new.thicket.hell.dist.kmeans2 <- kmeans(vibi.matrix.new.thicket.hell, centers=2, nstart=100)
-```
-
-
-## Run indicator species analysis on k-means clusters
-```{r ,include=TRUE, eval=FALSE}
-vibi.new.thicket.kmeans2.indval.out = indval(vibi.matrix.new.thicket[,c(-1)], vibi.new.thicket.hell.dist.kmeans2$cluster, numitr=10000)
-
-vibi.new.thicket.kmeans2.gr <- vibi.new.thicket.kmeans2.indval.out$maxcls[vibi.new.thicket.kmeans2.indval.out$pval <= 0.05]
-vibi.new.thicket.kmeans2.iv <- vibi.new.thicket.kmeans2.indval.out$indcls[vibi.new.thicket.kmeans2.indval.out$pval <= 0.05]
-vibi.new.thicket.kmeans2.pv <- vibi.new.thicket.kmeans2.indval.out$pval[vibi.new.thicket.kmeans2.indval.out$pval <= 0.05]
-vibi.new.thicket.kmeans2.fr <- apply(vibi.matrix.new.thicket[,c(-1)] > 0, 2, sum)[vibi.new.thicket.kmeans2.indval.out$pval <= 0.05]
-vibi.new.thicket.kmeans2.fidg <- data.frame(group=vibi.new.thicket.kmeans2.gr, indval=vibi.new.thicket.kmeans2.iv, pvalue=vibi.new.thicket.kmeans2.pv, freq=vibi.new.thicket.kmeans2.fr)
-vibi.new.thicket.kmeans2.fidg <- vibi.new.thicket.kmeans2.fidg[order(vibi.new.thicket.kmeans2.fidg$group, -vibi.new.thicket.kmeans2.fidg$indval),]
-```
-
-
-## Write IndVal results from K-means to csv  **NOT RUN
-```{r ,include=TRUE, eval=FALSE}
-write.csv(vibi.new.thicket.kmeans2.fidg, file="vibi_new_thicket_indval_kmeans2_results_04192022.csv")
-```
-
-
-## Combine K-means clusters with plot matrix
-```{r ,include=FALSE, eval=FALSE}
-kmeans2_thicket_cluster <- vibi.new.thicket.hell.dist.kmeans2$cluster
-vibi.new.thicket.kmeans2.cluster <- cbind(vibi.matrix.new.thicket, kmeans2_thicket_cluster)
-```
-
+#### The meadow plots are highly variable and messy.  Let's remove them and run the analysis again.
 
 ```{r ,include=TRUE, eval=FALSE}
-write.csv(vibi.new.thicket.kmeans2.cluster, file="vibi_new_thicket_kmeans2_results_04192022.csv")
+vibi.combined.new.matrix.no.meadows <- vibi.new.kmeans7.cluster[which (vibi.new.kmeans7.cluster$kmeans7_cluster %in% c(1:5, 7)),]
+vibi.combined.new.matrix.no.meadows <- vibi.combined.new.matrix.no.meadows[,c(-1,-920)]
+vibi.combined.new.matrix.no.meadows <- vibi.combined.new.matrix.no.meadows[, colSums(vibi.combined.new.matrix.no.meadows != 0) > 0]
 ```
 
-
-## Try NMDS ordination
-## NMDS
+#### Apply Hellinger standardization and create euclidean distance matrix
 ```{r ,include=TRUE, eval=FALSE}
-vibi.new.comm <- dbGetQuery(conn, "SELECT plot_id, kmeans7_optsil_cluster FROM nr_misc.vibi_new_cluster_kmeans7_optsil_results_09012022;")
-vibi.new.combined.nmds <- metaMDS(vibi.combined.new.hell, k = 2, try = 50, trymax = 50, autotransform=F)
-row.names(vibi.new.comm) <- vibi.new.comm[,1]
-vibi.new.groups <- merge(vibi.combined.new.hell, vibi.new.comm, by="row.names")
-vibi.new.groups <- vibi.new.groups[,c(-895)]
-names(vibi.new.groups)[1] <- "plot_id"
+vibi.combined.new.hell.forest <- decostand(vibi.combined.new.matrix.no.meadows, "hel", margin = 1)
+vibi.combined.new.hell.forest.dist <- vegdist(vibi.combined.new.hell.forest, "euc")
 ```
 
-
-## get levels from random forests groups
+#### K-means Partitioning
 ```{r ,include=TRUE, eval=FALSE}
-vibi.new.grp.lev <- factor(vibi.new.groups$kmeans7_optsil_cluster)
-col <- c("red", "blue", "green", "purple", "orange", "yellow", "pink", "brown")
-sit.sc <- scores(vibi.new.combined.nmds, display="sites")
-p <- ordiplot(vibi.new.combined.nmds, type="none", main="NMDS Plot with Community Colors", choices=c(1,2))
-points(sit.sc, pch=20, cex=0.8, col=col[vibi.new.grp.lev], bg=col[vibi.new.grp.lev])
-ordiellipse(vibi.new.combined.nmds, vibi.new.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
+vibi.combined.new.forest.kmeans6 <- kmeans(vibi.combined.new.hell.forest.dist, centers=6, nstart=100)
 ```
-![an image caption Source: Ultimate Funny Dog Videos Compilation 2013.](comm_nmds_plot.png)
 
-### Tree Species Synoptic Table
+
+#### Combine k-means clusters with plot matrix
+```{r ,include=TRUE, eval=FALSE}
+kmeans6.forest.cluster <- vibi.combined.new.forest.kmeans6$cluster
+vibi.combined.new.forest.kmeans6.cluster <- cbind(vibi.combined.new.matrix.no.meadows, kmeans6.forest.cluster)
+write.csv(vibi.combined.new.forest.kmeans6.cluster, file="vibi_combined_new_forest_kmeans6_results_09112024.csv", row.names = FALSE)
+```
+
+#### Run Indicator Species Analysis to see which species are significant indicators of each group
+```{r ,include=TRUE, eval=FALSE}
+vibi.combined.new.forest.kmeans6.indval.out = indval(vibi.combined.new.matrix.no.meadows, vibi.combined.new.forest.kmeans6$cluster, numitr=10000)
+vibi.new.forest.kmeans6.gr <- vibi.combined.new.forest.kmeans6.indval.out$maxcls[vibi.combined.new.forest.kmeans6.indval.out$pval <= 0.05]
+vibi.new.forest.kmeans6.iv <- vibi.combined.new.forest.kmeans6.indval.out$indcls[vibi.combined.new.forest.kmeans6.indval.out$pval <= 0.05]
+vibi.new.forest.kmeans6.pv <- vibi.combined.new.forest.kmeans6.indval.out$pval[vibi.combined.new.forest.kmeans6.indval.out$pval <= 0.05]
+vibi.new.forest.kmeans6.fr <- apply(vibi.combined.new.matrix.no.meadows > 0, 2, sum)[vibi.combined.new.forest.kmeans6.indval.out$pval <= 0.05]
+vibi.new.forest.kmeans6.fidg <- data.frame(group=vibi.new.forest.kmeans6.gr, indval=vibi.new.forest.kmeans6.iv, pvalue=vibi.new.forest.kmeans6.pv, freq=vibi.new.forest.kmeans6.fr)
+vibi.new.forest.kmeans6.fidg <- vibi.new.forest.kmeans6.fidg[order(vibi.new.forest.kmeans6.fidg$group, -vibi.new.forest.kmeans6.fidg$indval),]
+```
+
+
+```{r ,include=TRUE, eval=FALSE}
+vibi.combined.new.forest.nmds <- metaMDS(vibi.combined.new.hell.forest.dist, k = 2, try = 50, trymax = 100, autotransform=F)
+```
+
+
+```{r ,include=TRUE, eval=FALSE}
+vibi.combined.new.forest.grp.lev <- factor(vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster)
+col <- c("red", "blue", "green", "purple", "orange", "yellow")
+sit.sc <- vegan::scores(vibi.combined.new.forest.nmds, display="sites")
+p <- ordiplot(vibi.combined.new.forest.nmds, type="none", main="NMDS Plot with Community Colors - Forest", choices=c(1,2))
+points(sit.sc, pch=20, cex=0.8, col=col[vibi.combined.new.forest.grp.lev], bg=col[vibi.combined.new.forest.grp.lev])
+ordiellipse(vibi.combined.new.forest.nmds, vibi.combined.new.forest.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
+leg.txt <- c("Sugar Maple – Mixed Hardwood", "Bottomland Forest", "Oak – Mixed Hardwood", "Ruderal Shrubland", "Wet-Mesic Red Maple", "Beech – Mixed Hardwood (Hemlock)")
+
+legend("topleft", leg.txt, 
+       pch=20, col=col[], pt.cex=0.75, cex=0.75)
+```
+
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_forest_plots.png)
+
+#### Much better without the meadows included.  We see six rather coherent groups.
+
+## Synotpic Tables
+
+### Tree Species
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 my_tbl_trees <- tibble::tribble(
   ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
@@ -309,7 +291,7 @@ kable(my_tbl_trees, digits = 3, row.names = FALSE, align = "c",
 ```
 
 
-### Small Tree Species Synoptic Table
+### Small Tree Species
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 my_tbl_smtrees <- tibble::tribble(
   ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
@@ -328,7 +310,7 @@ kable(my_tbl_smtrees, digits = 3, row.names = FALSE, align = "c",
 ```
 
 
-### Shrub Species Synoptic Table
+### Shrub Species
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 my_tbl_shrubs <- tibble::tribble(
   ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
@@ -361,7 +343,7 @@ kable(my_tbl_shrubs, digits = 3, row.names = FALSE, align = "c",
 ```
 
 
-### Woody Vine Species Synoptic Table
+### Woody Vine Species
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 my_tbl_vines <- tibble::tribble(
   ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
@@ -382,8 +364,8 @@ kable(my_tbl_vines, digits = 3, row.names = FALSE, align = "c",
 ```
 
 
-### Herbaceous Species Synoptic Table
-## **This is a placeholder for the larger complete table
+### Herbaceous Species
+#### **This is a placeholder for the larger complete table
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 
 my_tbl_herbs <- tibble::tribble(
@@ -416,11 +398,27 @@ kable(my_tbl_herbs, digits = 3, row.names = FALSE, align = "c",
 ```
 
 
-```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%'}
+# Discussion
+
+## Community Descriptions
+
+### Beech – Mixed Hardwood (Hemlock)
+
+### Sugar Maple – Mixed Hardwood
+
+### Oak – Mixed Hardwood
+
+### Bottomland Forest
+
+### Wet-Mesic Red Maple
+
+### Ruderal Shrubland
+
+### Ruderal Meadow and Marsh
+
+
+## Crosswalk to Natureserve Types
+
+```{r pressure, echo=FALSE, fig.cap="", out.width = '100%'}
 knitr::include_graphics("usnvc_crosswalk_table_draft_2022.png")
 ```
-
-
-
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
