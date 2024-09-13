@@ -1,5 +1,5 @@
 ---
-title: "Plant Community Classification in Cleveland Metroparks Using Plot-Based Vegetation Monitoring Data"
+title: "Classification and Description of Plant Communities Using Vegetation Monitoring Data from Cleveland Metroparks"
 knit: (function(input_file, encoding) {
     out_dir <- 'docs';
     rmarkdown::render(input_file,
@@ -12,7 +12,7 @@ output:
     toc: true
     toc_float:
       collapsed: false
-    theme: journal
+    theme: flatly
 ---
 
 ```{r setup, include=FALSE}
@@ -49,15 +49,30 @@ library(optpart)
 
 # Introduction
 
+Vegetation classification is a critical component of natural resource management in a rapidly changing natural world.  Climate change and pest and pathogen outbreaks are among a host of factors influencing the trajectory of plant communities across the world.  In light of these influences, ecologists and land managers continue to grapple with how to manage resources in ways that ensure healthy, functioning ecosystems in the coming decades and beyond.
+In order to effectively manage for future conditions, it is important to understand past and present conditions.  Individual species and species assemblages that characterize a healthy natural condition now, may not be ideal under future climate scenarios.  A firm understanding of current composition and structure of natural areas is necessary for evaluating the extent to which conditions change.  This is where vegetation classification becomes important.
+Ecosystem classification and description has a long history, particularly in the eastern United States.  Early land surveyors were the first to note dominant species and describe conditions in virtually pristine natural areas as European settlement expanded across the country.  Their observations serve as a baseline to measure departure from what we would consider an “undisturbed” state.  These early records also helped inform the production of the first regional vegetation maps.  It is those early descriptions and maps that are reminders of how much the natural landscape of the United States has changed since European settlement.
+
+In Ohio, attempts to classify and/or describe the dominant vegetation patterns date back as far as the early 1800’s with several revisions, updates and new approaches being published in the years since (citation, Anderson 1982??).  In general, prior classifications of Ohio vegetation rely heavily on herbarium records, field notes and narratives rather than quantitative methods.  With rapid increases in computing power and software development, quantitative methods in ecological classification are now the standard.  The U.S. National Vegetation Classification (USNVC) is the most comprehensive vegetation classification system for the United States.  However, Ohio has not yet gone through a thorough evaluation of how well exisitng USNVC type descriptions match on-the-ground conditions in the state.  One challenging aspect of Ohio vegetation pattersn is the contrast between more Midwestern (Central Hardwoods) asseblages and those, particularly in the northeastern quarter, that have distinct “northern” elements, similar to what is found in the upper Great Lakes and Northeastern U.S.
+
+This investigation is the first attempt to use data from a long-term vegetation monitoring program at Cleveland Metroparks to classify and describe plant communities across the park district.  It focuses on a classification resolution with broad applicability to management planning.  It also provides a starting point for future investigation of finer-scale vegetation patterns.  The results are applicable to the broader ecoregion that Cleveland Metroparks’ properties occur in and will serve as an important baseline for studying changes in species composition and ecosystem function.
+
+
 # Methods
 
 ## Study Area
 
 ![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/study_area_map.png)
 
+Cleveland Metroparks properties are largely included within the boundaries of Cuyahoga County, in Northeast Ohio.  Small land holdings are also located in the adjacent counties of Geauga, Lake, Medina and Lorain.  Supplementary data were also collected from additional counties throughout northeastern Ohio.  All data collection occurred within the Glaciated Allegheny Plateaus and Erie Lake Plain physiographic regions of Ohio (citation).  These regions are characterized by mostly shale and sandstone bedrock under a layer of Wisconsinan-age glacial drift of varying thickness.  Scattered bedrock outcroppings and exposures occur throughout, particularly in stream and river valleys.  Soils tend to be clay-heavy and more or less acidic except where certain glacial (e.g., lacustrine clays) and bedrock (cone-in-cone limestone) deposits with calcareous elements occur.
+
 ## Data Collection
 
-#### Describe and reference sampling methods (Carolina Vegetation Survey, VIBI, PCAP)
+Data were compiled from 613 vegetation plots established throughout Cleveland Metroparks and adjacent natural areas.  A vast majority (400) of the plots are part of the Plant Community Assessment Program (PCAP) at Cleveland Metroparks designed to monitor the status and trends of terrestrial plant communities.  The PCAP sample was completed using a Generalized Random Tessellation Stratified (GRTS) survey design for an areal resource and was created in 2010 (citation).  Cleveland Metroparks properties were the primary target population and the design included stratification using five different strata:  reservation (individual parks), a primary zone around each major park, a secondary zone between individual parks, a broader “seven county” regional zone, and the entire Lake Erie-Allegheny Plateau (LEAP) ecoregion.  An additional 116 plots were sampled as part of a wetland monitoring program at Cleveland Metroparks and established using a GRTS survey design.  The remaining 92 plots were sampled opportunistically or for project-specific purposes.
+
+The sample collection approach at all sites follow the releve-style sampling that characterizes the Braun-Blanquet method and that has been used extensively for vegetation sampling in Ohio and elsewhere (Mack, Gara, Peet citations).  At each sample location, plots are situated in a manner that best captures the vegetation type that the GRTS point fell within while attempting to minimize heterogeneity.  In other words, field crews set the plots up so that they avoid the inclusion of conspicuously different vegetation types.  Once an orientation for the central axis of the plot is established, the full plot is laid out.  In most cases, a 20 meter by 50 meter plot was established and divided into ten, 10 meter by 10 meter quadrats or “modules” (Figure XX).  Typically, four quadrats were designated as “intensive” and areal cover for every vascular plant taxon 3 meter in height or less was recorded over the 0.01 ha area of the intensive quadrat.  The process was repeated for the three remaining intensive quadrats.  Additionally, the remaining non-intensive or “residual” quadrats were searched for taxa not yet recorded, and their cover was estimated over the remaining residual area, typically 0.06 ha.
+
+Data on woody species were collected in every quadrat within the plot.  Each woody taxon encountered was identified to species level and a diameter at breast height measurement was taken.  Each measurement was placed into one of the following diameter classes: 0-1cm, 1-2.5 cm, 2.5-5 cm, 5-10 cm, 10-15 cm, 15-20 cm, 20-25 cm, 25-30 cm, 30-35 cm, 35-40 cm.  Any stem over 40 cm in diameter was recorded individually to the nearest 0.1 cm.  Multi-stemmed shrub taxa were recorded as “shrub clump.”
 
 
 ## Statistical Analyses
@@ -242,6 +257,7 @@ legend("topleft", leg.txt,
 ![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_forest_plots.png)
 
 #### Much better without the meadows included.  We see six rather coherent groups.
+#### Need to explore environmental vector fitting and constrained ordination for more insight into environmental variables and their influence on community assemblage
 
 ## Synotpic Tables
 
@@ -404,13 +420,21 @@ kable(my_tbl_herbs, digits = 3, row.names = FALSE, align = "c",
 
 ### Beech – Mixed Hardwood (Hemlock)
 
+These forests are defined largely by the presence and dominance of American beech (Fagus grandifolia).  They are often late-successional, uneven-aged forests that support a diverse herbaceous and spring ephemeral flora.  On the landscape, this forest type is absent from frequently disturbed alluvial settings and is mostly restricted moist-mesic or sometimes dry-mesic slopes, ridges and flats.  Other diagnostic species include sugar maple (Acer saccharum),……
+
 ### Sugar Maple – Mixed Hardwood
+
+Compared with the Beech – Mixed Hardwood type, this forest type has significantly less American beech and are characterized by a dominance of sugar maple in both the canopy and understory.
 
 ### Oak – Mixed Hardwood
 
 ### Bottomland Forest
 
+This is the least cohesive, but maybe the most easily recognized forest type.  In includes all the different variants of forests that have developed on alluvial soil.  Some of the variability in compositions is undoubtably due to the dynamic and disturbance-prone nature of these areas.  Characteristic tree species include Acer negundo, Fraxinus pennsylvanica, Platanus occidentalis, Juglans nigra, and Populus deltoides.  Verbesina alternifolia and Persicaria virginiana are  significant native indicator species in the herbaceous layer along with the non-natives Alliaria petiolata, Lysimachia nummularia, and Hesperis matronalis....
+
 ### Wet-Mesic Red Maple
+
+These forests are characterized by dominance of red maple (Acer rubrum) in the canopy and a number of species adapted to seasonally wet conditions across all the strata.  Many plots designated as this “swamp forest” type are young even-aged stands that have developed on previously drained agricultural land.  In many cases the herbaceous layer is sparse, but characteristic herbaceous layer species include Carex swanii, Glyceria striata, Cinna arundinacea and Dryopteris carthusiana, among others.  Soils are realtively acidic with a seasonally-high water table.  In young forests of this type recovering from past disturbance, the presence of non-native earthworms is often a limiting factor for herbaceous layer development.
 
 ### Ruderal Shrubland
 
