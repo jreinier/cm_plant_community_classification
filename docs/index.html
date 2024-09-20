@@ -1506,7 +1506,7 @@ font-size: 0.95em;
 Communities Using Vegetation Monitoring Data from Cleveland
 Metroparks</h1>
 <h4 class="author">Author: John Reinier</h4>
-<h4 class="date">Last Updated: 2024-09-13</h4>
+<h4 class="date">Last Updated: 2024-09-20</h4>
 
 </div>
 
@@ -1744,8 +1744,7 @@ vibi.combined.new.hell.forest.dist &lt;- vegdist(vibi.combined.new.hell.forest, 
 <div id="combine-k-means-clusters-with-plot-matrix-1" class="section level4">
 <h4>Combine k-means clusters with plot matrix</h4>
 <pre class="r"><code>kmeans6.forest.cluster &lt;- vibi.combined.new.forest.kmeans6$cluster
-vibi.combined.new.forest.kmeans6.cluster &lt;- cbind(vibi.combined.new.matrix.no.meadows, kmeans6.forest.cluster)
-write.csv(vibi.combined.new.forest.kmeans6.cluster, file=&quot;vibi_combined_new_forest_kmeans6_results_09112024.csv&quot;, row.names = FALSE)</code></pre>
+vibi.combined.new.forest.kmeans6.cluster &lt;- cbind(vibi.combined.new.matrix.no.meadows, kmeans6.forest.cluster)</code></pre>
 </div>
 <div id="run-indicator-species-analysis-to-see-which-species-are-significant-indicators-of-each-group" class="section level4">
 <h4>Run Indicator Species Analysis to see which species are significant
@@ -3597,11 +3596,20 @@ diagnostic species include sugar maple (Acer saccharum),……</p>
 <div id="sugar-maple-mixed-hardwood" class="section level3">
 <h3>Sugar Maple – Mixed Hardwood</h3>
 <p>Compared with the Beech – Mixed Hardwood type, this forest type has
-significantly less American beech and are characterized by a dominance
-of sugar maple in both the canopy and understory.</p>
+significantly less American beech and is characterized by a dominance of
+sugar maple in both the canopy and understory. Soils supporting this
+type are typically richer (i.e., have higher nutrient levels) than those
+supporting similar beech or oak-dominated forests, and many good example
+are found on mesic slopes in association with relatively high pH bedrock
+and/or glacial sediments. Many conservation practitioners consider this
+part of a more broadly defined “Beech-Maple” forest type. Our analyses
+consistently separated this type out from the Beech - Mixed Hardwood
+forests and we prefer to maintain it as distinct, at least for now.</p>
 </div>
 <div id="oak-mixed-hardwood" class="section level3">
 <h3>Oak – Mixed Hardwood</h3>
+<p>Oak forests are characteristic of high, dry ridges with sterile
+soil…..</p>
 </div>
 <div id="bottomland-forest" class="section level3">
 <h3>Bottomland Forest</h3>

@@ -221,6 +221,10 @@ vibi.combined.new.forest.kmeans6 <- kmeans(vibi.combined.new.hell.forest.dist, c
 ```{r ,include=TRUE, eval=FALSE}
 kmeans6.forest.cluster <- vibi.combined.new.forest.kmeans6$cluster
 vibi.combined.new.forest.kmeans6.cluster <- cbind(vibi.combined.new.matrix.no.meadows, kmeans6.forest.cluster)
+```
+
+
+```{r ,include=FALSE, eval=FALSE}
 write.csv(vibi.combined.new.forest.kmeans6.cluster, file="vibi_combined_new_forest_kmeans6_results_09112024.csv", row.names = FALSE)
 ```
 
@@ -424,9 +428,11 @@ These forests are defined largely by the presence and dominance of American beec
 
 ### Sugar Maple – Mixed Hardwood
 
-Compared with the Beech – Mixed Hardwood type, this forest type has significantly less American beech and are characterized by a dominance of sugar maple in both the canopy and understory.
+Compared with the Beech – Mixed Hardwood type, this forest type has significantly less American beech and is characterized by a dominance of sugar maple in both the canopy and understory.  Soils supporting this type are typically richer (i.e., have higher nutrient levels) than those supporting similar beech or oak-dominated forests, and many good example are found on mesic slopes in association with relatively high pH bedrock and/or glacial sediments.  Many conservation practitioners consider this part of a more broadly defined "Beech-Maple" forest type.  Our analyses consistently separated this type out from the Beech - Mixed Hardwood forests and we prefer to maintain it as distinct, at least for now.
 
 ### Oak – Mixed Hardwood
+
+Oak forests are characteristic of high, dry ridges with sterile soil.....
 
 ### Bottomland Forest
 
@@ -437,6 +443,8 @@ This is the least cohesive, but maybe the most easily recognized forest type.  I
 These forests are characterized by dominance of red maple (Acer rubrum) in the canopy and a number of species adapted to seasonally wet conditions across all the strata.  Many plots designated as this “swamp forest” type are young even-aged stands that have developed on previously drained agricultural land.  In many cases the herbaceous layer is sparse, but characteristic herbaceous layer species include Carex swanii, Glyceria striata, Cinna arundinacea and Dryopteris carthusiana, among others.  Soils are realtively acidic with a seasonally-high water table.  In young forests of this type recovering from past disturbance, the presence of non-native earthworms is often a limiting factor for herbaceous layer development.
 
 ### Ruderal Shrubland
+
+
 
 ### Ruderal Meadow and Marsh
 
