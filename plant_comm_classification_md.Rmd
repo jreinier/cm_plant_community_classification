@@ -80,6 +80,7 @@ Data on woody species were collected in every quadrat within the plot.  Each woo
   - Soil chemical analyses
   - SSURGO soil texture (maybe)
   - Landfire topographic data
+    - Sampled rasters in QGIS
 
 ## Statistical Analyses
 
