@@ -331,7 +331,7 @@ plot(vibi.forest.env.fit, col = "black", font=1)
 
 ![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_with_env_vectors.png)
 
-#### Another plot but cleaned up a little
+#### Another plot but cleaned up a little (i.e., removed some clearly redundant env variables)
 ```{r ,include=TRUE, eval=FALSE}
 vibi.forest.sub.env.grp.lev <- factor(vibi.forest.sub.env.grp$kmeans6.forest.cluster)
 col <- c("red", "blue", "green", "purple", "orange", "yellow")
