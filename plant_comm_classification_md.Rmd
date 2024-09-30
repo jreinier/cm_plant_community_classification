@@ -324,13 +324,30 @@ leg.txt <- c("Sugar Maple – Mixed Hardwood", "Bottomland Forest", "Oak – Mix
 
 legend("topleft", leg.txt, 
        pch=15, col=col[], pt.cex=0.60, cex=0.60)
-vibi.forest.env.fit <- envfit(vibi.forest.sub.env.nmds, vibi.forest.env.std, permu = 999, p.max = 0.05, choices = c(1, 2))
+vibi.forest.env.fit <- envfit(vibi.forest.sub.env.nmds, vibi.forest.env.std, permu = 999, p.max = 0.01, choices = c(1, 2))
 plot(vibi.forest.env.fit, col = "black", font=1)
 ```
 
 
 ![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_with_env_vectors.png)
 
+#### Another plot but cleaned up a little
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.sub.env.grp.lev <- factor(vibi.forest.sub.env.grp$kmeans6.forest.cluster)
+col <- c("red", "blue", "green", "purple", "orange", "yellow")
+sit.sc <- vegan::scores(vibi.forest.sub.env.nmds, display="sites")
+p <- ordiplot(vibi.forest.sub.env.nmds, type="none", main="NMDS Plot with Community Colors - Forest", choices=c(1,2))
+points(sit.sc, pch=20, cex=0.8, col=col[vibi.forest.sub.env.grp.lev], bg=col[vibi.forest.sub.env.grp.lev])
+ordiellipse(vibi.forest.sub.env.nmds, vibi.forest.sub.env.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
+leg.txt <- c("Sugar Maple – Mixed Hardwood", "Bottomland Forest", "Oak – Mixed Hardwood", "Ruderal Shrubland", "Wet-Mesic Red Maple", "Beech – Mixed Hardwood (Hemlock)")
+
+legend("topleft", leg.txt, 
+       pch=15, col=col[], pt.cex=0.60, cex=0.60)
+vibi.forest.env.fit <- envfit(vibi.forest.sub.env.nmds, vibi.forest.env.std[,c(-5,-6,-11,-12,-17)], permu = 999, p.max = 0.01, choices = c(1, 2))
+plot(vibi.forest.env.fit, col = "black", font=1)
+```
+
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_with_env_vectors_clean.png)
 
 ## Synotpic Tables
 
