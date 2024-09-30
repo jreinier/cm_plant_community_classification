@@ -514,7 +514,7 @@ These forests are defined largely by the presence and dominance of American beec
 
 ### Sugar Maple – Mixed Hardwood
 
-Compared with the Beech – Mixed Hardwood type, this forest type has significantly less American beech and is characterized by a dominance of sugar maple in both the canopy and understory.  Soils supporting this type are typically richer (i.e., have higher nutrient levels) than those supporting similar beech or oak-dominated forests, and many good example are found on mesic slopes in association with relatively high pH bedrock and/or glacial sediments.  Many conservation practitioners consider this part of a more broadly defined "Beech-Maple" forest type.  Our analyses consistently separated this type out from the Beech - Mixed Hardwood forests and we prefer to maintain it as distinct, at least for now.
+Compared with the Beech – Mixed Hardwood type, this forest type has significantly less American beech and is characterized by a dominance of sugar maple in both the canopy and understory.  Soils supporting this type are typically richer (i.e., have higher nutrient levels) than those supporting similar beech or oak-dominated forests, and many good example are found on rich mesic slopes.  Many conservation practitioners consider this part of a more broadly defined "Beech-Maple" forest type.  Our analyses consistently separated this type out from the Beech - Mixed Hardwood forests and we prefer to maintain it as distinct, at least for now.
 
 ### Oak – Mixed Hardwood
 
@@ -522,7 +522,7 @@ Oak forests are characteristic of high, dry ridges with sterile soil.....
 
 ### Bottomland Forest
 
-This is the least cohesive, but maybe the most easily recognized forest type.  In includes all the different variants of forests that have developed on alluvial soil.  Some of the variability in compositions is undoubtably due to the dynamic and disturbance-prone nature of these areas.  Characteristic tree species include Acer negundo, Fraxinus pennsylvanica, Platanus occidentalis, Juglans nigra, and Populus deltoides.  Verbesina alternifolia and Persicaria virginiana are  significant native indicator species in the herbaceous layer along with the non-natives Alliaria petiolata, Lysimachia nummularia, and Hesperis matronalis....
+This is the least cohesive, but maybe the most easily recognized forest type.  In includes all the different variants of forests that have developed on alluvial soil.  These soils are typically higher in avaialble minerals/nutrients and have a higher pH.  Some of the variability in compositions is undoubtably due to the dynamic and disturbance-prone nature of these areas.  Characteristic tree species include Acer negundo, Fraxinus pennsylvanica, Platanus occidentalis, Juglans nigra, and Populus deltoides.  Verbesina alternifolia and Persicaria virginiana are  significant native indicator species in the herbaceous layer along with the non-natives Alliaria petiolata, Lysimachia nummularia, and Hesperis matronalis....
 
 ### Wet-Mesic Red Maple
 
@@ -530,9 +530,12 @@ These forests are characterized by dominance of red maple (Acer rubrum) in the c
 
 ### Ruderal Shrubland
 
+This could be thought of as more of a successional state than a stable community type.  Dominant species are often exotic shrubs with "weedy natives" scattered throughout.
 
 
 ### Ruderal Meadow and Marsh
+
+Like Ruderal Shrubland, this type represented the many versions of forb and garmainoid dominated "old fields" that have established in previously cleared/disturbed areas.
 
 
 ## Crosswalk to Natureserve Types
