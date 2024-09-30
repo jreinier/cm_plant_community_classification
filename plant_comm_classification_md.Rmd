@@ -82,6 +82,7 @@ Data on woody species were collected in every quadrat within the plot.  Each woo
   - Landfire topographic data
     - Sampled rasters in QGIS
 
+
 ## Statistical Analyses
 
 
@@ -268,7 +269,68 @@ legend("topleft", leg.txt,
 ![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_forest_plots.png)
 
 #### Much better without the meadows included.  We see six rather coherent groups.
-#### Need to explore environmental vector fitting and constrained ordination for more insight into environmental variables and their influence on community assemblage
+
+#### Try to fit some environmental data
+
+#### Query environmental variables
+```{r ,include=TRUE, eval=FALSE}
+vibi.env <- dbGetQuery(conn, "SELECT * FROM nr_misc.env_data_for_veg_comm_analysis;")
+row.names(vibi.env) <- vibi.env[ ,1]
+vibi.env[is.na(vibi.env)] <- 0
+```
+
+#### Filter site X species matrix to include only plots with env data
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.sub.env <- filter(vibi.combined.new.matrix.no.meadows, rownames(vibi.combined.new.matrix.no.meadows) %in% vibi.env.forest.grp$plot_id)
+```
+
+#### Apply Hellinger standardization and create euclidean distance matrix
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.sub.env.hell <- decostand(vibi.forest.sub.env, "hel", margin = 1)
+vibi.forest.sub.env.hell.dist <- vegdist(vibi.forest.sub.env.hell, "euc")
+```
+
+#### Combine with forest group ID from ealrier K-means clustering
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.sub.env.grp <- merge(vibi.forest.sub.env, vibi.combined.new.forest.kmeans6.cluster["kmeans6.forest.cluster"], by.x = 'row.names', by.y = 'row.names')
+row.names(vibi.forest.sub.env.grp) <- vibi.forest.sub.env.grp[ ,1]
+vibi.forest.sub.env.grp <- vibi.forest.sub.env.grp[,-1]
+```
+
+#### Re-run the NMDS ordiantion with only those plots we have environmental data for
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.sub.env.nmds <- metaMDS(vibi.forest.sub.env.hell.dist, k = 2, try = 50, trymax = 100, autotransform=F)
+```
+
+#### Standardize env variables since they are on different scales
+```{r ,include=TRUE, eval=FALSE}
+vibi.env.std <- decostand(vibi.env[,2:20], "standardize")
+```
+
+#### Filter to only include plots included in NMDS
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.env.std <- filter(vibi.env.std, rownames(vibi.env.std) %in% rownames(vibi.forest.sub.env.grp)) 
+```
+
+#### Plot new NMDS with env vectors
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.sub.env.grp.lev <- factor(vibi.forest.sub.env.grp$kmeans6.forest.cluster)
+col <- c("red", "blue", "green", "purple", "orange", "yellow")
+sit.sc <- vegan::scores(vibi.forest.sub.env.nmds, display="sites")
+p <- ordiplot(vibi.forest.sub.env.nmds, type="none", main="NMDS Plot with Community Colors - Forest", choices=c(1,2))
+points(sit.sc, pch=20, cex=0.8, col=col[vibi.forest.sub.env.grp.lev], bg=col[vibi.forest.sub.env.grp.lev])
+ordiellipse(vibi.forest.sub.env.nmds, vibi.forest.sub.env.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
+leg.txt <- c("Sugar Maple – Mixed Hardwood", "Bottomland Forest", "Oak – Mixed Hardwood", "Ruderal Shrubland", "Wet-Mesic Red Maple", "Beech – Mixed Hardwood (Hemlock)")
+
+legend("topleft", leg.txt, 
+       pch=15, col=col[], pt.cex=0.60, cex=0.60)
+vibi.forest.env.fit <- envfit(vibi.forest.sub.env.nmds, vibi.forest.env.std, permu = 999, p.max = 0.05, choices = c(1, 2))
+plot(vibi.forest.env.fit, col = "black", font=1)
+```
+
+
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_with_env_vectors.png)
+
 
 ## Synotpic Tables
 
