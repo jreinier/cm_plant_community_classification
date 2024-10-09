@@ -351,6 +351,21 @@ plot(vibi.forest.env.fit, col = "black", font=1)
 
 ## Synotpic Tables
 
+#### Fist remove species that occur in less than 5% of plots
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.rare.removed <- vibi.combined.new.matrix.no.meadows[,colSums(vibi.combined.new.matrix.no.meadows != 0) > 31 | colnames(vibi.combined.new.matrix.no.meadows) == "TSUCAN_1" | colnames(vibi.combined.new.matrix.no.meadows) == "TSUCAN_2"] 
+```
+
+#### Build species constancy table
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.grp.constancy <- const(pcap.forests[,2:191], pcap.forests.combined.cl.groups)
+vibi.forest.grp.constancy
+```
+
+```{r ,include=FALSE, eval=FALSE}
+write.csv(pcap.forests.groups.constancy, file="pcap_forests_group_constancy_12182017.csv")
+```
+
 ### Tree Species
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
 my_tbl_trees <- tibble::tribble(
@@ -518,7 +533,7 @@ Compared with the Beech – Mixed Hardwood type, this forest type has significan
 
 ### Oak – Mixed Hardwood
 
-Oak forests are characteristic of high, dry ridges with sterile soil.....
+Oak-dominated forests are characteristic of high, dry ridges and upper slopes with mostly sterile,  acidic soil.  White oak (Quercus alba) and  black oak (Quercus velutina) are characteristic of the best examples while red oak is often dominant in more mesic situations.  Pignut hickory (Carya galbra/ovalis) and shagbark hickory are usually present among the oaks, while bitternut hickory may occur in areas with a bit more moisture.  Hop-hornbeam (Ostrya virginiana) is nearly always present in the understory/shrub layer and may co-occur with witch-hazel (Hamamelis virginiana).  Ericaceous shrubs (Vaccinium spp., Gaylussacia baccata) are especially characteristic of high-quality oak forests.       
 
 ### Bottomland Forest
 
