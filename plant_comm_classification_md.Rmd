@@ -356,14 +356,23 @@ plot(vibi.forest.env.fit, col = "black", font=1)
 vibi.forest.rare.removed <- vibi.combined.new.matrix.no.meadows[,colSums(vibi.combined.new.matrix.no.meadows != 0) > 31 | colnames(vibi.combined.new.matrix.no.meadows) == "TSUCAN_1" | colnames(vibi.combined.new.matrix.no.meadows) == "TSUCAN_2"] 
 ```
 
+
 #### Build species constancy table
 ```{r ,include=TRUE, eval=FALSE}
-vibi.forest.grp.constancy <- const(pcap.forests[,2:191], pcap.forests.combined.cl.groups)
-vibi.forest.grp.constancy
+vibi.forest.grp.constancy <- const(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster)
 ```
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(pcap.forests.groups.constancy, file="pcap_forests_group_constancy_12182017.csv")
+write.csv(vibi.forest.grp.constancy, file="vibi_forest_group_constancy_10102024.csv")
+```
+
+#### Build species abundance table
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.grp.abundance <- importance(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster)
+```
+
+```{r ,include=FALSE, eval=FALSE}
+write.csv(vibi.forest.grp.abundance, file="vibi_forest_group_abundance_10102024.csv")
 ```
 
 ### Tree Species
