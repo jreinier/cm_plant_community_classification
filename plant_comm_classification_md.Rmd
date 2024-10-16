@@ -349,31 +349,62 @@ plot(vibi.forest.env.fit, col = "black", font=1)
 
 ![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_with_env_vectors_clean.png)
 
-## Synotpic Tables
+#### Let's try to refine the plot classifications using a random forest approach
+```{r ,include=TRUE, eval=FALSE}
+library(randomForest)
+```
+
+```{r ,include=TRUE, eval=FALSE}
+ind <- sample(2,nrow(vibi.combined.new.forest.kmeans6.cluster),replace=TRUE,prob=c(0.7,0.3))
+trainData <- vibi.combined.new.forest.kmeans6.cluster[ind==1,]
+testData <- vibi.combined.new.forest.kmeans6.cluster[ind==2,]
+
+vibi.rf <- randomForest(as.factor(kmeans6.forest.cluster)~ ., data=trainData,ntree=10000, Importance = TRUE, proximity=TRUE)
+plot(vibi.rf)
+table(predict(vibi.rf),trainData$kmeans6.forest.cluster)
+```
+
+```{r ,include=TRUE, eval=FALSE}
+print(vibi.rf)
+```
+
+```{r ,include=TRUE, eval=FALSE}
+Prediction <- predict(vibi.rf, testData)
+submit <- data.frame(plot_id = rownames(testData), Survived = Prediction)
+```
+
+```{r ,include=TRUE, eval=FALSE}
+write.csv(submit, file = "vibi_forest_rf_prediction.csv", row.names = FALSE)
+```
+
+#### plot variable importance
+```{r ,include=TRUE, eval=FALSE}
+varImpPlot(vibi.rf)
+```
+
+## Synoptic Tables
 
 #### Fist remove species that occur in less than 5% of plots
 ```{r ,include=TRUE, eval=FALSE}
 vibi.forest.rare.removed <- vibi.combined.new.matrix.no.meadows[,colSums(vibi.combined.new.matrix.no.meadows != 0) > 31 | colnames(vibi.combined.new.matrix.no.meadows) == "TSUCAN_1" | colnames(vibi.combined.new.matrix.no.meadows) == "TSUCAN_2"] 
 ```
 
-
-#### Build species constancy table
 ```{r ,include=TRUE, eval=FALSE}
-vibi.forest.grp.constancy <- const(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster)
+vibi.forest.syn.tbl.percfreq <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "percfreq")
 ```
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.forest.grp.constancy, file="vibi_forest_group_constancy_10102024.csv")
+write.csv(vibi.forest.syn.tbl.percfreq$syntable, file="vibi_forest_group_synoptic_percfreq_10162024.csv")
 ```
 
-#### Build species abundance table
 ```{r ,include=TRUE, eval=FALSE}
-vibi.forest.grp.abundance <- importance(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster)
+vibi.forest.syn.tbl.phi <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "phi")
 ```
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.forest.grp.abundance, file="vibi_forest_group_abundance_10102024.csv")
+write.csv(vibi.forest.syn.tbl.phi$syntable, file="vibi_forest_group_synoptic_phi_10162024.csv")
 ```
+
 
 ### Tree Species
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}
