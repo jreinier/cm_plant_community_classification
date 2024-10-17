@@ -389,22 +389,23 @@ varImpPlot(vibi.rf)
 vibi.forest.rare.removed <- vibi.combined.new.matrix.no.meadows[,colSums(vibi.combined.new.matrix.no.meadows != 0) > 31 | colnames(vibi.combined.new.matrix.no.meadows) == "TSUCAN_1" | colnames(vibi.combined.new.matrix.no.meadows) == "TSUCAN_2"] 
 ```
 
+#### Synoptic percentage frequency table - unordered
 ```{r ,include=TRUE, eval=FALSE}
-vibi.forest.syn.tbl.percfreq <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "percfreq")
+vibi.forest.syntbl.percfreq <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "percfreq")
 ```
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.forest.syn.tbl.percfreq$syntable, file="vibi_forest_group_synoptic_percfreq_10162024.csv")
+write.csv(vibi.forest.syntbl.percfreq$syntable, file="vibi_forest_group_syntbl_percfreq_10162024.csv")
 ```
 
+#### Synoptic mean abundance table - unordered
 ```{r ,include=TRUE, eval=FALSE}
-vibi.forest.syn.tbl.phi <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "phi")
+vibi.forest.syntbl.meanabund <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "mean", digits = 3)
 ```
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.forest.syn.tbl.phi$syntable, file="vibi_forest_group_synoptic_phi_10162024.csv")
+write.csv(vibi.forest.syntbl.meanabund$syntable, file="vibi_forest_group_syntbl_meanabund_10162024.csv")
 ```
-
 
 ### Tree Species
 ```{r , echo=FALSE, warning=FALSE, message=FALSE}

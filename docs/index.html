@@ -1506,7 +1506,7 @@ font-size: 0.95em;
 Communities Using Vegetation Monitoring Data from Cleveland
 Metroparks</h1>
 <h4 class="author">Author: John Reinier</h4>
-<h4 class="date">Last Updated: 2024-10-16</h4>
+<h4 class="date">Last Updated: 2024-10-17</h4>
 
 </div>
 
@@ -1883,8 +1883,14 @@ submit &lt;- data.frame(plot_id = rownames(testData), Survived = Prediction)</co
 <div id="fist-remove-species-that-occur-in-less-than-5-of-plots" class="section level4">
 <h4>Fist remove species that occur in less than 5% of plots</h4>
 <pre class="r"><code>vibi.forest.rare.removed &lt;- vibi.combined.new.matrix.no.meadows[,colSums(vibi.combined.new.matrix.no.meadows != 0) &gt; 31 | colnames(vibi.combined.new.matrix.no.meadows) == &quot;TSUCAN_1&quot; | colnames(vibi.combined.new.matrix.no.meadows) == &quot;TSUCAN_2&quot;] </code></pre>
-<pre class="r"><code>vibi.forest.syn.tbl.percfreq &lt;- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = &quot;percentage&quot;, type = &quot;percfreq&quot;)</code></pre>
-<pre class="r"><code>vibi.forest.syn.tbl.phi &lt;- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = &quot;percentage&quot;, type = &quot;phi&quot;)</code></pre>
+</div>
+<div id="synoptic-percentage-frequency-table---unordered" class="section level4">
+<h4>Synoptic percentage frequency table - unordered</h4>
+<pre class="r"><code>vibi.forest.syntbl.percfreq &lt;- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = &quot;percentage&quot;, type = &quot;percfreq&quot;)</code></pre>
+</div>
+<div id="synoptic-mean-abundance-table---unordered" class="section level4">
+<h4>Synoptic mean abundance table - unordered</h4>
+<pre class="r"><code>vibi.forest.syntbl.meanabund &lt;- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = &quot;percentage&quot;, type = &quot;mean&quot;, digits = 3)</code></pre>
 </div>
 <div id="tree-species" class="section level3">
 <h3>Tree Species</h3>
