@@ -20,7 +20,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r lib, include=FALSE}
+```{r lib, include=FALSE, eval=TRUE}
+library(odbc)
+library(DBI)
 library(RPostgres)
 library(ggplot2)
 library(ade4)
@@ -43,6 +45,21 @@ library(caret)
 library(vegan3d)
 library(dplyr)
 library(optpart)
+```
+
+```{r ,include=FALSE, eval=TRUE}
+config <- config::get()
+
+## alternatively
+dw <- config::get("datawarehouse")
+
+conn <- dbConnect(RPostgres::Postgres(),
+                      host = dw$server,
+                      user    = dw$uid,
+                      password    = dw$pwd,
+                      port   = dw$port,
+                      dbname = dw$database
+)
 ```
 
 # Abstract
@@ -247,6 +264,10 @@ vibi.new.forest.kmeans6.fidg <- data.frame(group=vibi.new.forest.kmeans6.gr, ind
 vibi.new.forest.kmeans6.fidg <- vibi.new.forest.kmeans6.fidg[order(vibi.new.forest.kmeans6.fidg$group, -vibi.new.forest.kmeans6.fidg$indval),]
 ```
 
+```{r ,include=FALSE, eval=FALSE}
+write.csv(vibi.new.forest.kmeans6.fidg, file="vibi_forest_indval_kmeans6_results_10222024.csv")
+```
+
 
 ```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.forest.nmds <- metaMDS(vibi.combined.new.hell.forest.dist, k = 2, try = 50, trymax = 100, autotransform=F)
@@ -400,56 +421,40 @@ write.csv(vibi.forest.syntbl.percfreq$syntable, file="vibi_forest_group_syntbl_p
 
 #### Synoptic mean abundance table - unordered
 ```{r ,include=TRUE, eval=FALSE}
-vibi.forest.syntbl.meanabund <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "mean", digits = 3)
+vibi.forest.syntbl.meanabund <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "mean", digits = 5)
 ```
 
 ```{r ,include=FALSE, eval=FALSE}
 write.csv(vibi.forest.syntbl.meanabund$syntable, file="vibi_forest_group_syntbl_meanabund_10162024.csv")
 ```
 
+#### Synoptic percent frequency table - SORTED
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.syntbl.percfreq.sorted <- synsort(syn1 = vibi.forest.syntbl.percfreq$syntable, matrix = vibi.forest.rare.removed, cluster = vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, method = "allspec", min1 = 0)
+```
+
+```{r ,include=FALSE, eval=FALSE}
+write.csv(vibi.forest.syntbl.percfreq.sorted$syntable, file="vibi_forest_group_syntbl_percfreq_sorted_10162024.csv")
+```
+
+#### Synoptic mean abundance table - SORTED
+```{r ,include=TRUE, eval=FALSE}
+vibi.forest.syntbl.meanabund.sorted <- synsort(syn1 = vibi.forest.syntbl.meanabund$syntable, matrix = vibi.forest.rare.removed, cluster = vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, method = "allspec", min1 = 0)
+```
+
+```{r ,include=FALSE, eval=FALSE}
+write.csv(vibi.forest.syntbl.meanabund.sorted$syntable, file="vibi_forest_group_syntbl_meanabund_sorted_10162024.csv")
+```
+
 ### Tree Species
-```{r , echo=FALSE, warning=FALSE, message=FALSE}
-my_tbl_trees <- tibble::tribble(
-  ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
-    "STNDEAD_1",       99,     0.34,       95,     0.32,       19,     0.23,      100,     0.33,      100,     0.43,       99,     0.33,      100,     0.37,      100,     0.43,
-     "FAGGRA_1",       99,     0.52,        2,     0.07,        0,        0,       98,     0.33,       11,     0.07,       46,     0.14,       50,     0.14,        0,        0,
-     "ACESAR_1",       98,     0.45,       21,      0.1,        0,        0,       90,     0.33,       45,     0.11,       99,     0.49,       59,      0.2,        0,        0,
-     "ACERUB_1",       61,     0.12,       16,     0.09,        2,     0.32,       90,     0.27,       39,     0.12,       38,     0.12,      100,     0.44,       17,     0.13,
-     "PRUSER_1",       27,     0.08,       27,     0.18,        2,     0.14,       58,     0.12,       42,     0.15,       41,     0.14,       61,     0.13,        5,     0.23,
-     "TILAME_1",       23,     0.07,        4,     0.04,        0,        0,       14,     0.06,       11,     0.12,       27,     0.12,       15,     0.15,        0,        0,
-     "ULMAME_1",       19,     0.11,       43,     0.15,        4,     0.33,       24,     0.07,       69,     0.23,       55,     0.15,       59,     0.16,       17,     0.15,
-     "QUERUB_1",       16,     0.06,        7,     0.05,        2,     0.28,       52,     0.18,       20,     0.12,       29,     0.12,       26,     0.15,       15,     0.17,
-     "PRUSER_2",       15,     0.17,       18,     0.18,        2,     0.21,       34,      0.1,       12,     0.19,       38,     0.14,       30,     0.14,        5,     0.18,
-     "TSUCAN_1",       15,     0.29,        0,        0,        0,        0,       14,     0.39,        2,     0.04,        2,     0.14,        2,     0.32,        0,        0,
-     "TSUCAN_2",       15,     0.29,        0,        0,        0,        0,        7,     0.47,        0,        0,        2,      0.1,        1,     0.24,        0,        0,
-     "CAROVT_1",       14,     0.07,        2,     0.08,        0,        0,       32,     0.15,       16,     0.11,       18,     0.15,       24,     0.12,        3,     0.17,
-     "LIRTUL_1",       14,     0.08,        2,     0.14,        0,        0,       24,      0.2,       23,     0.13,       26,     0.19,       33,     0.14,        3,     0.36,
-     "CARCOR_1",       12,     0.07,       21,     0.08,        0,        0,       20,     0.08,       20,     0.13,       50,     0.13,        7,     0.11,        0,        0,
-     "ULMAME_2",       10,     0.09,       23,     0.12,        0,        0,        6,     0.05,       20,     0.15,       20,      0.1,       15,     0.09,        3,     0.06,
-     "MAGACU_2",        8,     0.07,        0,        0,        0,        0,       12,     0.06,        2,     0.13,        7,     0.07,        2,     0.04,        0,        0,
-     "CARLAC_2",        2,     0.07,        2,     0.04,        0,        0,        1,     0.04,        2,     0.22,        0,        0,        1,      0.1,        0,        0,
-     "ACESAC_2",        1,      0.1,       23,     0.16,        2,     0.83,        3,     0.28,        6,     0.14,        2,      0.1,       15,     0.15,       10,     0.43,
-     "QUEALB_1",        1,     0.21,        0,        0,        2,     0.36,       17,     0.17,        8,     0.14,        5,      0.1,        7,     0.12,        3,     0.08,
-     "QUEVEL_2",        1,     0.11,        0,        0,        0,        0,       16,     0.13,        0,        0,        2,     0.15,        6,      0.1,        0,        0,
-     "ACENEG_1",        0,        0,       98,     0.31,        2,     0.13,        0,        0,        9,      0.2,        8,     0.08,        2,     0.05,        5,     0.12,
-     "JUGNIG_1",        0,        0,       16,     0.12,        6,     0.44,        0,        0,       19,     0.14,        1,     0.35,        2,     0.07,        3,      0.2,
-     "PLAOCC_1",        0,        0,        9,     0.11,        8,     0.57,        1,     0.03,        6,     0.29,        7,     0.13,        1,     0.04,        5,     0.14,
-     "ACESAC_1",        0,        0,        9,     0.24,        0,        0,        4,     0.21,        0,        0,        1,     0.04,       10,     0.12,       12,     0.34,
-     "MACPOM_2",        0,        0,        9,     0.13,        0,        0,        0,        0,        0,        0,        0,        0,        1,     0.07,        0,        0,
-     "QUEPAL_1",        0,        0,        7,      0.1,        4,      0.3,        0,        0,       14,     0.19,        0,        0,       10,     0.21,        3,     0.18,
-     "CATSPE_1",        0,        0,        2,     0.07,        2,     0.11,        0,        0,        2,     0.04,        0,        0,        0,        0,        0,        0,
-     "POPDEL_1",        0,        0,        0,        0,        4,     0.64,        0,        0,        3,     0.09,        1,     0.14,        0,        0,        3,     0.34,
-     "FRANIG_1",        0,        0,        0,        0,        0,        0,        1,     0.04,        2,     0.09,        1,     0.24,        2,     0.38,        0,        0,
-     "ACEPLA_2",        0,        0,        0,        0,        0,        0,        0,        0,        2,     0.05,        2,     0.15,        2,     0.05,        3,     0.28,
-     "QUEPRI_2",        0,        0,        0,        0,        0,        0,        0,        0,        2,      0.1,        0,        0,        1,     0.05,        0,        0,
-     "LIQSTY_2",        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        0,        2,     0.13,        0,        0
-  )
+```{r , echo=FALSE, include=TRUE, eval=TRUE}
+vibi.forest.syntbl.trees.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vibi_forest_synoptic_trees;")
+```
 
+```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
-kable(my_tbl_trees, digits = 3, row.names = FALSE, align = "c",
+kable(vibi.forest.syntbl.trees.sorted, digits = 4, row.names = FALSE, align = "c",
               caption = NULL)
-
-
 ```
 
 
@@ -558,6 +563,8 @@ kable(my_tbl_herbs, digits = 3, row.names = FALSE, align = "c",
               caption = NULL)
 
 ```
+
+
 
 
 # Discussion
