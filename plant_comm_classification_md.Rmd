@@ -459,21 +459,14 @@ kable(vibi.forest.syntbl.trees.sorted, digits = 4, row.names = FALSE, align = "c
 
 
 ### Small Tree Species
-```{r , echo=FALSE, warning=FALSE, message=FALSE}
-my_tbl_smtrees <- tibble::tribble(
-  ~species_code, ~const_1, ~abund_1, ~const_2, ~abund_2, ~const_3, ~abund_3, ~const_4, ~abund_4, ~const_5, ~abund_5, ~const_6, ~abund_6, ~const_7, ~abund_7, ~const_8, ~abund_8,
-       "CRPCAR",       47,     0.02,        4,     0.01,        2,        0,       60,     0.04,       20,     0.03,       52,     0.02,       35,     0.03,        0,        0,
-       "PRUVIR",        2,        0,        9,     0.01,        0,        0,       12,     0.03,        3,        0,       16,     0.04,       10,     0.02,        0,        0,
-       "PYRCOR",        0,        0,        4,        0,        6,        0,        0,        0,        6,     0.01,        0,        0,        0,        0,        0,        0,
-       "PRUCER",        0,        0,        2,     0.01,        0,        0,        1,        0,        2,        0,        2,        0,        2,     0.03,        0,        0,
-       "CRAPUN",        0,        0,        0,        0,        0,        0,        1,        0,        2,     0.05,        1,     0.04,        0,        0,        0,        0
-  )
+```{r , echo=FALSE, include=TRUE, eval=TRUE}
+vibi.forest.syntbl.smtrees.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vibi_forest_synoptic_small_trees;")
+```
 
+```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
-kable(my_tbl_smtrees, digits = 3, row.names = FALSE, align = "c",
+kable(vibi.forest.syntbl.smtrees.sorted, digits = 4, row.names = FALSE, align = "c",
               caption = NULL)
-
-
 ```
 
 
