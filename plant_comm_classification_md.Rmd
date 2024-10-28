@@ -45,6 +45,7 @@ library(caret)
 library(vegan3d)
 library(dplyr)
 library(optpart)
+library(kableExtra)
 ```
 
 ```{r ,include=FALSE, eval=TRUE}
@@ -72,7 +73,7 @@ Ecosystem classification and description has a long history, particularly in the
 
 In Ohio, attempts to classify and/or describe the dominant vegetation patterns date back as far as the early 1800’s with several revisions, updates and new approaches being published in the years since (citation, Anderson 1982??).  In general, prior classifications of Ohio vegetation rely heavily on herbarium records, field notes and narratives rather than quantitative methods.  With rapid increases in computing power and software development, quantitative methods in ecological classification are now the standard.  The U.S. National Vegetation Classification (USNVC) is the most comprehensive vegetation classification system for the United States.  However, Ohio has not yet gone through a thorough evaluation of how well exisitng USNVC type descriptions match on-the-ground conditions in the state.  One challenging aspect of Ohio vegetation pattersn is the contrast between more Midwestern (Central Hardwoods) asseblages and those, particularly in the northeastern quarter, that have distinct “northern” elements, similar to what is found in the upper Great Lakes and Northeastern U.S.
 
-This investigation is the first attempt to use data from a long-term vegetation monitoring program at Cleveland Metroparks to classify and describe plant communities across the park district.  It focuses on a classification resolution with broad applicability to management planning.  It also provides a starting point for future investigation of finer-scale vegetation patterns.  The results are applicable to the broader ecoregion that Cleveland Metroparks’ properties occur in and will serve as an important baseline for studying changes in species composition and ecosystem function.
+This investigation is the first attempt to use data from a long-term vegetation monitoring program at Cleveland Metroparks to classify and describe plant communities across the park district.  It focuses on a classification resolution with broad applicability to management planning.  It also provides a starting point for future investigation of finer-scale vegetation patterns.  The results are applicable to the broader ecoregion(s) that Cleveland Metroparks’ properties occur in and will serve as an important baseline for studying changes in species composition and ecosystem function.
 
 
 # Methods
@@ -454,7 +455,15 @@ vibi.forest.syntbl.trees.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vibi_
 ```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
 kable(vibi.forest.syntbl.trees.sorted, digits = 4, row.names = FALSE, align = "c",
-              caption = NULL)
+              caption = NULL, col.names = c("Species code", "Sugar Maple - Mixed Hardwood", "Bottomland", "Oak - Mixed Hardwood", "Ruderal", "Wet-Mesic Red Maple", "Beech - Mixed Hardwood")) %>%
+  kable_classic (html_font = "Cambria") %>%
+  column_spec(2, background = "gray") %>%
+  row_spec(1:8, background = "gray") %>%
+  
+  column_spec(1, background = "white") %>%
+  column_spec(3:7, background = "white") %>%
+  row_spec(9:34, background = "white")
+  
 ```
 
 
