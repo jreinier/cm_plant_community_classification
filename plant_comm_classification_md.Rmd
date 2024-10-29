@@ -490,7 +490,13 @@ vibi.forest.syntbl.shrubs.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vibi
 ```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
 kable(vibi.forest.syntbl.shrubs.sorted, digits = 4, row.names = FALSE, align = "c",
-              caption = NULL)
+              caption = NULL, col.names = c("Species code", "Sugar Maple - Mixed Hardwood", "Bottomland", "Oak - Mixed Hardwood", "Ruderal", "Wet-Mesic Red Maple", "Beech - Mixed Hardwood")) %>%
+  kable_classic (html_font = "Cambria") %>%
+  column_spec(2, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[1:4], "gray", "white")) %>%
+  column_spec(4, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[5], "gray", "white")) %>%
+  column_spec(5, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[6:12], "gray", "white")) %>%
+  column_spec(6, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[13:14], "gray", "white")) %>%
+  column_spec(7, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[15], "gray", "white"))
 ```
 
 
