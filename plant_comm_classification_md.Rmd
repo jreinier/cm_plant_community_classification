@@ -374,7 +374,7 @@ vibi.forests.rda <- rda(vibi.forest.sub.env.hell ~ ., vibi.forest.env.std)
 vibi.forests.rda
 ```
 
-
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/rda_summary.png)
 
 #### Triplots of the rda results (wa scores)
 #### Site scores as weighted averages (vegan's default)
