@@ -105,7 +105,7 @@ Data on woody species were collected in every quadrat within the plot.  Each woo
 
 
 #### Query data and create site X species matrix
-```{r query, include=TRUE, eval=FALSE}
+```{r query, include=TRUE, eval=TRUE}
 vibi.combined.new <- dbGetQuery(conn, "SELECT * FROM nr_misc.plot_data_for_veg_comm_analysis_newest_sample;")
 vibi.combined.matrix.new <- cast(vibi.combined.new, plot_id ~ acronym, value='abundance', fun="mean")
 row.names(vibi.combined.matrix.new) <- vibi.combined.matrix.new[ ,1]
@@ -114,7 +114,7 @@ vibi.combined.matrix.new[is.na(vibi.combined.matrix.new)] <- 0
 
 
 #### Apply Hellinger transformation and calculate euclidean distance matrix
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=TRUE, eval=TRUE}
 vibi.combined.new.hell <- decostand(vibi.combined.matrix.new, "hel", margin = 1)
 vibi.combined.new.hell.dist <- vegdist(vibi.combined.new.hell, "euc")
 ```
@@ -137,26 +137,22 @@ This (above) is called the Hellinger transformation.  The Euclidian distance fun
 # Results
 
 ### Hierarchical Clustering
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=TRUE, eval=TRUE}
 vibi.combined.new.clust.ward.hell <- hclust(vibi.combined.new.hell.dist, method = "ward.D")
 plot(vibi.combined.new.clust.ward.hell)
 ```
 
-![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/basic_cluster_dendro.png)
 
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=TRUE, eval=TRUE}
 ## Cut the dendrogram at 8 groups
 vibi.combined.cl.groups = cutree(vibi.combined.new.clust.ward.hell, k=8)
 ```
 
 
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=TRUE, eval=TRUE}
 source("hcoplot.R")
 hcoplot(vibi.combined.new.clust.ward.hell, vibi.combined.new.hell.dist, k=8)
 ```
-
-
-![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/dendro_hcopot.png)
 
 #### Consider looking at silhouette plot of the final partition
 ```{r ,include=FALSE, eval=FALSE}
@@ -183,7 +179,7 @@ vibi.new.kmeans7.cluster <- cbind(vibi.combined.matrix.new, kmeans7_cluster)
 ```
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.new.kmeans7.cluster, file="vibi_combined_new_kmeans7_results_09112024.csv", row.names = FALSE)
+write.csv(vibi.new.kmeans7.cluster, file="vibi_combined_new_kmeans7_results_11012024.csv", row.names = FALSE)
 ```
 
 ## Indicator Species Analysis 
@@ -199,7 +195,7 @@ vibi.new.kmeans7.fidg <- vibi.new.kmeans7.fidg[order(vibi.new.kmeans7.fidg$group
 
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.new.kmeans7.fidg, file="vibi_new_indval_kmeans7_results_09112024.csv")
+write.csv(vibi.new.kmeans7.fidg, file="vibi_new_indval_kmeans7_results_11012024.csv")
 ```
 
 ## NMDS ordination
@@ -210,24 +206,25 @@ vibi.combined.new.nmds <- metaMDS(vibi.combined.new.hell.dist, k = 2, try = 50, 
 #### Let's plot it and see how the groups look
 ```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.grp.lev <- factor(vibi.new.kmeans7.cluster$kmeans7_cluster)
-col <- c("red", "blue", "green", "purple", "orange", "yellow", "pink")
+col <- c("red", "blue", "green", "purple", "orange", "gray", "pink")
 sit.sc <- vegan::scores(vibi.combined.new.nmds, display="sites")
 p <- ordiplot(vibi.combined.new.nmds, type="none", main="NMDS Plot with Community Colors", choices=c(1,2))
 points(sit.sc, pch=20, cex=0.8, col=col[vibi.combined.new.grp.lev], bg=col[vibi.combined.new.grp.lev])
 ordiellipse(vibi.combined.new.nmds, vibi.combined.new.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
-leg.txt <- c("Beech – Mixed Hardwood (Hemlock)", "Sugar Maple – Mixed Hardwood", "Ruderal Shrubland", "Wet-Mesic Red Maple", "Oak – Mixed Hardwood", "Ruderal Meadow and Marsh", "Bottomland Forest")
+leg.txt <- c("type_1", "type_2", "type_3", "type_4", "type_5", "type_6", "type_7")
 
 legend("topright", leg.txt, 
        pch=20, col=col[], pt.cex=0.75, cex=0.50)
 ```
 
-![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_all_plots.png)
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_plot_all.png)
+
 
 #### The meadow plots are highly variable and messy.  Let's remove them and run the analysis again.
 
 ```{r ,include=TRUE, eval=FALSE}
-vibi.combined.new.matrix.no.meadows <- vibi.new.kmeans7.cluster[which (vibi.new.kmeans7.cluster$kmeans7_cluster %in% c(1:5, 7)),]
-vibi.combined.new.matrix.no.meadows <- vibi.combined.new.matrix.no.meadows[,c(-1,-920)]
+vibi.combined.new.matrix.no.meadows <- vibi.new.kmeans7.cluster[which (vibi.new.kmeans7.cluster$kmeans7_cluster %in% c(1:5,7)),]
+vibi.combined.new.matrix.no.meadows <- vibi.combined.new.matrix.no.meadows[,c(-1,-919)]
 vibi.combined.new.matrix.no.meadows <- vibi.combined.new.matrix.no.meadows[, colSums(vibi.combined.new.matrix.no.meadows != 0) > 0]
 ```
 
@@ -251,7 +248,7 @@ vibi.combined.new.forest.kmeans6.cluster <- cbind(vibi.combined.new.matrix.no.me
 
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.combined.new.forest.kmeans6.cluster, file="vibi_combined_new_forest_kmeans6_results_09112024.csv", row.names = FALSE)
+write.csv(vibi.combined.new.forest.kmeans6.cluster, file="vibi_combined_new_forest_kmeans6_results_11012024.csv", row.names = FALSE)
 ```
 
 #### Run Indicator Species Analysis to see which species are significant indicators of each group
@@ -266,7 +263,8 @@ vibi.new.forest.kmeans6.fidg <- vibi.new.forest.kmeans6.fidg[order(vibi.new.fore
 ```
 
 ```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.new.forest.kmeans6.fidg, file="vibi_forest_indval_kmeans6_results_10222024.csv")
+write.csv(vibi.new.forest.kmeans6.fidg, file="vibi_forest_indval_kmeans6_results_11062024.csv")
+dbWriteTable(conn, SQL('"nr_misc"."vibi_forest_indval_kmeans6_results"'), vibi.new.forest.kmeans6.fidg, overwrite = TRUE, row.names = TRUE)
 ```
 
 
@@ -277,21 +275,20 @@ vibi.combined.new.forest.nmds <- metaMDS(vibi.combined.new.hell.forest.dist, k =
 
 ```{r ,include=TRUE, eval=FALSE}
 vibi.combined.new.forest.grp.lev <- factor(vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster)
-col <- c("red", "blue", "green", "purple", "orange", "yellow")
+col <- c("red", "blue", "green", "purple", "orange", "gray")
 sit.sc <- vegan::scores(vibi.combined.new.forest.nmds, display="sites")
 p <- ordiplot(vibi.combined.new.forest.nmds, type="none", main="NMDS Plot with Community Colors - Forest", choices=c(1,2))
 points(sit.sc, pch=20, cex=0.8, col=col[vibi.combined.new.forest.grp.lev], bg=col[vibi.combined.new.forest.grp.lev])
 ordiellipse(vibi.combined.new.forest.nmds, vibi.combined.new.forest.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
-leg.txt <- c("Sugar Maple – Mixed Hardwood", "Bottomland Forest", "Oak – Mixed Hardwood", "Ruderal Shrubland", "Wet-Mesic Red Maple", "Beech – Mixed Hardwood (Hemlock)")
+leg.txt <- c("Bottomland Forest", "Wet-Mesic Red Maple Forest", "Ruderal Shrubland", "Oak - Mixed Hardwood Forest", "Beech - Mixed Hardwood Forest", "Sugar Maple - Mixed Hardwood Forest")
 
 legend("topleft", leg.txt, 
-       pch=20, col=col[], pt.cex=0.75, cex=0.75)
+       pch=20, col=col[], pt.cex=0.75, cex=0.58)
 ```
 
-![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_forest_plots.png)
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmd_plot_forest.png)
 
-#### Much better without the meadows included.  We see six rather coherent groups.
-
+#### Okay, things get a little more interpratable with the meadow plots excluded.
 #### Try to fit some environmental data
 
 #### Query environmental variables
@@ -303,7 +300,7 @@ vibi.env[is.na(vibi.env)] <- 0
 
 #### Filter site X species matrix to include only plots with env data
 ```{r ,include=TRUE, eval=FALSE}
-vibi.forest.sub.env <- filter(vibi.combined.new.matrix.no.meadows, rownames(vibi.combined.new.matrix.no.meadows) %in% vibi.env.forest.grp$plot_id)
+vibi.forest.sub.env <- filter(vibi.combined.new.matrix.no.meadows, rownames(vibi.combined.new.matrix.no.meadows) %in% vibi.env$plot_id)
 ```
 
 #### Apply Hellinger standardization and create euclidean distance matrix
@@ -337,21 +334,20 @@ vibi.forest.env.std <- filter(vibi.env.std, rownames(vibi.env.std) %in% rownames
 #### Plot new NMDS with env vectors
 ```{r ,include=TRUE, eval=FALSE}
 vibi.forest.sub.env.grp.lev <- factor(vibi.forest.sub.env.grp$kmeans6.forest.cluster)
-col <- c("red", "blue", "green", "purple", "orange", "yellow")
+col <- c("red", "blue", "green", "purple", "orange", "gray")
 sit.sc <- vegan::scores(vibi.forest.sub.env.nmds, display="sites")
 p <- ordiplot(vibi.forest.sub.env.nmds, type="none", main="NMDS Plot with Community Colors - Forest", choices=c(1,2))
 points(sit.sc, pch=20, cex=0.8, col=col[vibi.forest.sub.env.grp.lev], bg=col[vibi.forest.sub.env.grp.lev])
 ordiellipse(vibi.forest.sub.env.nmds, vibi.forest.sub.env.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
-leg.txt <- c("Sugar Maple – Mixed Hardwood", "Bottomland Forest", "Oak – Mixed Hardwood", "Ruderal Shrubland", "Wet-Mesic Red Maple", "Beech – Mixed Hardwood (Hemlock)")
+leg.txt <- c("Bottomland Forest", "Wet-Mesic Red Maple Forest", "Ruderal Shrubland", "Oak - Mixed Hardwood Forest", "Beech - Mixed Hardwood Forest", "Sugar Maple - Mixed Hardwood Forest")
 
 legend("topleft", leg.txt, 
-       pch=15, col=col[], pt.cex=0.60, cex=0.60)
+       pch=20, col=col[], pt.cex=0.75, cex=0.58)
 vibi.forest.env.fit <- envfit(vibi.forest.sub.env.nmds, vibi.forest.env.std, permu = 999, p.max = 0.01, choices = c(1, 2))
 plot(vibi.forest.env.fit, col = "black", font=1)
 ```
 
-
-![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_with_env_vectors.png)
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_plot_env_vectors.png)
 
 #### Another plot but cleaned up a little (i.e., removed some clearly redundant env variables)
 ```{r ,include=TRUE, eval=FALSE}
@@ -361,22 +357,56 @@ sit.sc <- vegan::scores(vibi.forest.sub.env.nmds, display="sites")
 p <- ordiplot(vibi.forest.sub.env.nmds, type="none", main="NMDS Plot with Community Colors - Forest", choices=c(1,2))
 points(sit.sc, pch=20, cex=0.8, col=col[vibi.forest.sub.env.grp.lev], bg=col[vibi.forest.sub.env.grp.lev])
 ordiellipse(vibi.forest.sub.env.nmds, vibi.forest.sub.env.grp.lev, kind = "sd", conf=0.80, lwd=2, col="black")
-leg.txt <- c("Sugar Maple – Mixed Hardwood", "Bottomland Forest", "Oak – Mixed Hardwood", "Ruderal Shrubland", "Wet-Mesic Red Maple", "Beech – Mixed Hardwood (Hemlock)")
+leg.txt <- c("Bottomland Forest", "Wet-Mesic Red Maple Forest", "Ruderal Shrubland", "Oak - Mixed Hardwood Forest", "Beech - Mixed Hardwood Forest", "Sugar Maple - Mixed Hardwood Forest")
 
 legend("topleft", leg.txt, 
-       pch=15, col=col[], pt.cex=0.60, cex=0.60)
+       pch=20, col=col[], pt.cex=0.75, cex=0.58)
 vibi.forest.env.fit <- envfit(vibi.forest.sub.env.nmds, vibi.forest.env.std[,c(-5,-6,-11,-12,-17)], permu = 999, p.max = 0.01, choices = c(1, 2))
 plot(vibi.forest.env.fit, col = "black", font=1)
 ```
 
-![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_with_env_vectors_clean.png)
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmds_plot_env_vectors_clean.png)
+
+#### Try some constrained ordination
+#### Redundancy Analysis (RDA)
+```{r ,include=TRUE, eval=FALSE}
+vibi.forests.rda <- rda(vibi.forest.sub.env.hell ~ ., vibi.forest.env.std)
+vibi.forests.rda
+```
+
+
+
+#### Triplots of the rda results (wa scores)
+#### Site scores as weighted averages (vegan's default)
+#### Scaling 2 (default): correlation triplot
+
+```{r ,include=TRUE, eval=FALSE}
+plot(vibi.forests.rda, main="Triplot RDA vibi.hel ~ env - scaling 2 - wa scores")
+```
+
+![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/rda_plot.png)
+
+#### Let's see if reducing the number of env variables through a correlation test helps
+
+```{r ,include=FALSE, eval=FALSE}
+vibi.forest.env.cor<-cor(vibi.forest.env.std)
+
+vibi.forest.env.find_cor <- findCorrelation(vibi.forest.env.cor,cutoff=0.6)
+
+vibi.forest.env.std.no.cor <- vibi.forest.env.std[,-vibi.forest.env.find_cor]
+
+vibi.forests.rda2 <- rda(vibi.forest.sub.env.hell ~ ., vibi.forest.env.std.no.cor)
+summary(vibi.forests.rda2)
+
+plot(vibi.forests.rda2, main="Triplot RDA vibi.hel ~ env - scaling 2 - wa scores")
+```
 
 #### Let's try to refine the plot classifications using a random forest approach
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 library(randomForest)
 ```
 
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 ind <- sample(2,nrow(vibi.combined.new.forest.kmeans6.cluster),replace=TRUE,prob=c(0.7,0.3))
 trainData <- vibi.combined.new.forest.kmeans6.cluster[ind==1,]
 testData <- vibi.combined.new.forest.kmeans6.cluster[ind==2,]
@@ -386,21 +416,21 @@ plot(vibi.rf)
 table(predict(vibi.rf),trainData$kmeans6.forest.cluster)
 ```
 
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 print(vibi.rf)
 ```
 
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 Prediction <- predict(vibi.rf, testData)
 submit <- data.frame(plot_id = rownames(testData), Survived = Prediction)
 ```
 
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 write.csv(submit, file = "vibi_forest_rf_prediction.csv", row.names = FALSE)
 ```
 
 #### plot variable importance
-```{r ,include=TRUE, eval=FALSE}
+```{r ,include=FALSE, eval=FALSE}
 varImpPlot(vibi.rf)
 ```
 
@@ -416,17 +446,9 @@ vibi.forest.rare.removed <- vibi.combined.new.matrix.no.meadows[,colSums(vibi.co
 vibi.forest.syntbl.percfreq <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "percfreq")
 ```
 
-```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.forest.syntbl.percfreq$syntable, file="vibi_forest_group_syntbl_percfreq_10162024.csv")
-```
-
 #### Synoptic mean abundance table - unordered
 ```{r ,include=TRUE, eval=FALSE}
 vibi.forest.syntbl.meanabund <- syntable(vibi.forest.rare.removed, vibi.combined.new.forest.kmeans6.cluster$kmeans6.forest.cluster, abund = "percentage", type = "mean", digits = 5)
-```
-
-```{r ,include=FALSE, eval=FALSE}
-write.csv(vibi.forest.syntbl.meanabund$syntable, file="vibi_forest_group_syntbl_meanabund_10162024.csv")
 ```
 
 #### Synoptic percent frequency table - SORTED
@@ -436,6 +458,7 @@ vibi.forest.syntbl.percfreq.sorted <- synsort(syn1 = vibi.forest.syntbl.percfreq
 
 ```{r ,include=FALSE, eval=FALSE}
 write.csv(vibi.forest.syntbl.percfreq.sorted$syntable, file="vibi_forest_group_syntbl_percfreq_sorted_10162024.csv")
+dbWriteTable(conn, SQL('"nr_misc"."vibi_forest_group_syntbl_percfreq_sorted"'), vibi.forest.syntbl.percfreq.sorted$syntable, overwrite = TRUE, row.names = FALSE)
 ```
 
 #### Synoptic mean abundance table - SORTED
@@ -445,6 +468,7 @@ vibi.forest.syntbl.meanabund.sorted <- synsort(syn1 = vibi.forest.syntbl.meanabu
 
 ```{r ,include=FALSE, eval=FALSE}
 write.csv(vibi.forest.syntbl.meanabund.sorted$syntable, file="vibi_forest_group_syntbl_meanabund_sorted_10162024.csv")
+dbWriteTable(conn, SQL('"nr_misc"."vibi_forest_group_syntbl_meanabund_sorted"'), vibi.forest.syntbl.meanabund.sorted$syntable, overwrite = TRUE, row.names = FALSE)
 ```
 
 ### Tree Species
