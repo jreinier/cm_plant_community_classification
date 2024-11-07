@@ -223,7 +223,7 @@ legend("topright", leg.txt,
 #### The meadow plots are highly variable and messy.  Let's remove them and run the analysis again.
 
 ```{r ,include=TRUE, eval=FALSE}
-vibi.combined.new.matrix.no.meadows <- vibi.new.kmeans7.cluster[which (vibi.new.kmeans7.cluster$kmeans7_cluster %in% c(1:5,7)),]
+vibi.combined.new.matrix.no.meadows <- vibi.new.kmeans7.cluster[which (vibi.new.kmeans7.cluster$kmeans7_cluster %in% c(2:7)),]
 vibi.combined.new.matrix.no.meadows <- vibi.combined.new.matrix.no.meadows[,c(-1,-919)]
 vibi.combined.new.matrix.no.meadows <- vibi.combined.new.matrix.no.meadows[, colSums(vibi.combined.new.matrix.no.meadows != 0) > 0]
 ```
@@ -288,7 +288,7 @@ legend("topleft", leg.txt,
 
 ![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/nmd_plot_forest.png)
 
-#### Okay, things get a little more interpratable with the meadow plots excluded.
+#### Okay, things get a little clearer with the meadow plots excluded.
 #### Try to fit some environmental data
 
 #### Query environmental variables
