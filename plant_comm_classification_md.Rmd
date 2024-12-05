@@ -372,6 +372,7 @@ plot(vibi.forest.env.fit, col = "black", font=1)
 ```{r ,include=TRUE, eval=FALSE}
 vibi.forests.rda <- rda(vibi.forest.sub.env.hell ~ ., vibi.forest.env.std)
 vibi.forests.rda
+summary(vibi.forests.rda)
 ```
 
 ![](G:/NaturalResources/Reinier/Documents/Documents/Git/cm_plant_community_classification/rda_summary.png)
@@ -458,7 +459,7 @@ vibi.forest.syntbl.percfreq.sorted <- synsort(syn1 = vibi.forest.syntbl.percfreq
 
 ```{r ,include=FALSE, eval=FALSE}
 write.csv(vibi.forest.syntbl.percfreq.sorted$syntable, file="vibi_forest_group_syntbl_percfreq_sorted_10162024.csv")
-dbWriteTable(conn, SQL('"nr_misc"."vibi_forest_group_syntbl_percfreq_sorted"'), vibi.forest.syntbl.percfreq.sorted$syntable, overwrite = TRUE, row.names = FALSE)
+dbWriteTable(conn, SQL('"nr_misc"."vibi_forest_group_syntbl_percfreq_sorted"'), vibi.forest.syntbl.percfreq.sorted$syntable, overwrite = TRUE, row.names = TRUE)
 ```
 
 #### Synoptic mean abundance table - SORTED
@@ -468,7 +469,7 @@ vibi.forest.syntbl.meanabund.sorted <- synsort(syn1 = vibi.forest.syntbl.meanabu
 
 ```{r ,include=FALSE, eval=FALSE}
 write.csv(vibi.forest.syntbl.meanabund.sorted$syntable, file="vibi_forest_group_syntbl_meanabund_sorted_10162024.csv")
-dbWriteTable(conn, SQL('"nr_misc"."vibi_forest_group_syntbl_meanabund_sorted"'), vibi.forest.syntbl.meanabund.sorted$syntable, overwrite = TRUE, row.names = FALSE)
+dbWriteTable(conn, SQL('"nr_misc"."vibi_forest_group_syntbl_meanabund_sorted"'), vibi.forest.syntbl.meanabund.sorted$syntable, overwrite = TRUE, row.names = TRUE)
 ```
 
 ### Tree Species
@@ -479,14 +480,14 @@ vibi.forest.syntbl.trees.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vibi_
 ```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
 kable(vibi.forest.syntbl.trees.sorted, digits = 4, row.names = FALSE, align = "c",
-              caption = NULL, col.names = c("Species code", "Sugar Maple - Mixed Hardwood", "Bottomland", "Oak - Mixed Hardwood", "Ruderal", "Wet-Mesic Red Maple", "Beech - Mixed Hardwood")) %>%
+              caption = NULL, col.names = c("Species code", "Wet-Mesic Red Maple", "Oak - Mixed Hardwood", "Bottomland", "Sugar Maple - Mixed Hardwood", "Beech - Mixed Hardwood", "Ruderal")) %>%
   kable_classic (html_font = "Cambria") %>%
-  column_spec(2, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[1:8], "gray", "white")) %>%
-  column_spec(3, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[9:15], "gray", "white")) %>%
-  column_spec(4, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[16:23], "gray", "white")) %>%
-  column_spec(5, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[24:26], "gray", "white")) %>%
-  column_spec(6, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[27:32], "gray", "white")) %>%
-  column_spec(7, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[33:34], "gray", "white"))
+  column_spec(2, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[1:6], "gray", "white")) %>%
+  column_spec(3, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[7:13], "gray", "white")) %>%
+  column_spec(4, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[14:19], "gray", "white")) %>%
+  column_spec(5, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[20:27], "gray", "white")) %>%
+  column_spec(6, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[28:29], "gray", "white")) %>%
+  column_spec(7, background = ifelse(vibi.forest.syntbl.trees.sorted$species_code %in% vibi.forest.syntbl.trees.sorted$species_code[30:35], "gray", "white"))
 ```
 
 
@@ -498,11 +499,12 @@ vibi.forest.syntbl.smtrees.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vib
 ```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
 kable(vibi.forest.syntbl.smtrees.sorted, digits = 4, row.names = FALSE, align = "c",
-              caption = NULL, col.names = c("Species code", "Sugar Maple - Mixed Hardwood", "Bottomland", "Oak - Mixed Hardwood", "Ruderal", "Wet-Mesic Red Maple", "Beech - Mixed Hardwood")) %>%
+              caption = NULL, col.names = c("Species code", "Wet-Mesic Red Maple", "Oak - Mixed Hardwood", "Bottomland", "Sugar Maple - Mixed Hardwood", "Beech - Mixed Hardwood", "Ruderal")) %>%
   kable_classic (html_font = "Cambria") %>%
   column_spec(3, background = ifelse(vibi.forest.syntbl.smtrees.sorted$species_code %in% vibi.forest.syntbl.smtrees.sorted$species_code[1], "gray", "white")) %>%
-  column_spec(4, background = ifelse(vibi.forest.syntbl.smtrees.sorted$species_code %in% vibi.forest.syntbl.smtrees.sorted$species_code[2:3], "gray", "white")) %>%
-  column_spec(7, background = ifelse(vibi.forest.syntbl.smtrees.sorted$species_code %in% vibi.forest.syntbl.smtrees.sorted$species_code[4], "gray", "white"))
+  column_spec(4, background = ifelse(vibi.forest.syntbl.smtrees.sorted$species_code %in% vibi.forest.syntbl.smtrees.sorted$species_code[2], "gray", "white")) %>%
+  column_spec(5, background = ifelse(vibi.forest.syntbl.smtrees.sorted$species_code %in% vibi.forest.syntbl.smtrees.sorted$species_code[3], "gray", "white")) %>%
+  column_spec(6, background = ifelse(vibi.forest.syntbl.smtrees.sorted$species_code %in% vibi.forest.syntbl.smtrees.sorted$species_code[4], "gray", "white"))
 ```
 
 
@@ -514,13 +516,13 @@ vibi.forest.syntbl.shrubs.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vibi
 ```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
 kable(vibi.forest.syntbl.shrubs.sorted, digits = 4, row.names = FALSE, align = "c",
-              caption = NULL, col.names = c("Species code", "Sugar Maple - Mixed Hardwood", "Bottomland", "Oak - Mixed Hardwood", "Ruderal", "Wet-Mesic Red Maple", "Beech - Mixed Hardwood")) %>%
+              caption = NULL, col.names = c("Species code", "Wet-Mesic Red Maple", "Oak - Mixed Hardwood", "Bottomland", "Sugar Maple - Mixed Hardwood", "Beech - Mixed Hardwood", "Ruderal")) %>%
   kable_classic (html_font = "Cambria") %>%
-  column_spec(2, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[1:4], "gray", "white")) %>%
-  column_spec(4, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[5], "gray", "white")) %>%
-  column_spec(5, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[6:12], "gray", "white")) %>%
-  column_spec(6, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[13:14], "gray", "white")) %>%
-  column_spec(7, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[15], "gray", "white"))
+  column_spec(2, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[1:2], "gray", "white")) %>%
+  column_spec(3, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[3:4], "gray", "white")) %>%
+  column_spec(5, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[5:8], "gray", "white")) %>%
+  column_spec(6, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[9], "gray", "white")) %>%
+  column_spec(7, background = ifelse(vibi.forest.syntbl.shrubs.sorted$species_code %in% vibi.forest.syntbl.shrubs.sorted$species_code[10:16], "gray", "white"))
 ```
 
 
@@ -532,12 +534,12 @@ vibi.forest.syntbl.vines.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vibi_
 ```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
 kable(vibi.forest.syntbl.vines.sorted, digits = 4, row.names = FALSE, align = "c",
-              caption = NULL, col.names = c("Species code", "Sugar Maple - Mixed Hardwood", "Bottomland", "Oak - Mixed Hardwood", "Ruderal", "Wet-Mesic Red Maple", "Beech - Mixed Hardwood")) %>%
+              caption = NULL, col.names = c("Species code", "Wet-Mesic Red Maple", "Oak - Mixed Hardwood", "Bottomland", "Sugar Maple - Mixed Hardwood", "Beech - Mixed Hardwood", "Ruderal")) %>%
   kable_classic (html_font = "Cambria") %>%
-  column_spec(2, background = ifelse(vibi.forest.syntbl.vines.sorted$species_code %in% vibi.forest.syntbl.vines.sorted$species_code[1:2], "gray", "white")) %>%
-  column_spec(3, background = ifelse(vibi.forest.syntbl.vines.sorted$species_code %in% vibi.forest.syntbl.vines.sorted$species_code[3], "gray", "white")) %>%
-  column_spec(4, background = ifelse(vibi.forest.syntbl.vines.sorted$species_code %in% vibi.forest.syntbl.vines.sorted$species_code[4], "gray", "white")) %>%
-  column_spec(5, background = ifelse(vibi.forest.syntbl.vines.sorted$species_code %in% vibi.forest.syntbl.vines.sorted$species_code[5:6], "gray", "white"))
+  column_spec(3, background = ifelse(vibi.forest.syntbl.vines.sorted$species_code %in% vibi.forest.syntbl.vines.sorted$species_code[1], "gray", "white")) %>%
+  column_spec(4, background = ifelse(vibi.forest.syntbl.vines.sorted$species_code %in% vibi.forest.syntbl.vines.sorted$species_code[2], "gray", "white")) %>%
+  column_spec(5, background = ifelse(vibi.forest.syntbl.vines.sorted$species_code %in% vibi.forest.syntbl.vines.sorted$species_code[3:4], "gray", "white")) %>%
+  column_spec(7, background = ifelse(vibi.forest.syntbl.vines.sorted$species_code %in% vibi.forest.syntbl.vines.sorted$species_code[5:6], "gray", "white"))
 ```
 
 
@@ -549,14 +551,14 @@ vibi.forest.syntbl.herbs.sorted <- dbGetQuery(conn, "SELECT * FROM nr_misc.vibi_
 ```{r , echo=FALSE, include=TRUE, eval=TRUE}
 require(knitr)
 kable(vibi.forest.syntbl.herbs.sorted, digits = 4, row.names = FALSE, align = "c",
-              caption = NULL, col.names = c("Species code", "Sugar Maple - Mixed Hardwood", "Bottomland", "Oak - Mixed Hardwood", "Ruderal", "Wet-Mesic Red Maple", "Beech - Mixed Hardwood")) %>%
+              caption = NULL, col.names = c("Species code", "Wet-Mesic Red Maple", "Oak - Mixed Hardwood", "Bottomland", "Sugar Maple - Mixed Hardwood", "Beech - Mixed Hardwood", "Ruderal")) %>%
   kable_classic (html_font = "Cambria") %>%
-  column_spec(2, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[1:22], "gray", "white")) %>%
-  column_spec(3, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[23:48], "gray", "white")) %>%
-  column_spec(4, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[49:54], "gray", "white")) %>%
-  column_spec(5, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[55:74], "gray", "white")) %>%
-  column_spec(6, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[75:86], "gray", "white")) %>%
-  column_spec(7, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[87:101], "gray", "white"))
+  column_spec(2, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[1:11], "gray", "white")) %>%
+  column_spec(3, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[12:17], "gray", "white")) %>%
+  column_spec(4, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[18:44], "gray", "white")) %>%
+  column_spec(5, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[45:67], "gray", "white")) %>%
+  column_spec(6, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[68:81], "gray", "white")) %>%
+  column_spec(7, background = ifelse(vibi.forest.syntbl.herbs.sorted$species_code %in% vibi.forest.syntbl.herbs.sorted$species_code[82:99], "gray", "white"))
 ```
 
 
