@@ -56,8 +56,8 @@ dw <- config::get("datawarehouse")
 
 conn <- dbConnect(RPostgres::Postgres(),
                       host = dw$server,
-                      user    = dw$uid,
-                      password    = dw$pwd,
+                      user  = dw$uid,
+                      password  = dw$pwd,
                       port   = dw$port,
                       dbname = dw$database
 )
@@ -588,18 +588,20 @@ This is the least cohesive, but maybe the most easily recognized forest type.  I
 
 These forests are characterized by dominance of red maple (Acer rubrum) in the canopy and a number of species adapted to seasonally wet conditions across all the strata.  Many plots designated as this “swamp forest” type are young even-aged stands that have developed on previously drained agricultural land.  In many cases the herbaceous layer is sparse, but characteristic herbaceous layer species include Carex swanii, Glyceria striata, Cinna arundinacea and Dryopteris carthusiana, among others.  Soils are realtively acidic with a seasonally-high water table.  In young forests of this type recovering from past disturbance, the presence of non-native earthworms is often a limiting factor for herbaceous layer development.
 
-### Ruderal Shrubland
+### Ruderal Forest and Shrubland
 
 This could be thought of as more of a successional state than a stable community type.  Dominant species are often exotic shrubs with "weedy natives" scattered throughout.
 
 
-### Ruderal Meadow and Marsh
+### Meadow and Marsh
 
-Like Ruderal Shrubland, this type represented the many versions of forb and garmainoid dominated "old fields" that have established in previously cleared/disturbed areas.
+Like Ruderal Shrubland, this type represented the many versions of forb and graminoid dominated "old fields" that have established in previously cleared/disturbed areas.
 
 
 ## Crosswalk to Natureserve Types
 
+A primary goal of the plant community classification is to identify vegetation typologies that are repeated across the landscape and are predictable given a set of environmental conditions.  In many cases, typologies identified through analysis of vegetation data collected recently differ from vegetation units that occurred historically in the region.  There are many, often interrelated, reasons for this departure from historical trajectories including habitat alteration since European settlement, invasive species, pest and pathogen outbreaks and climate change, among others.  Also, of particular importance to this investigation, is the way in which sampling occurred.  Because plots were located at randomly selected locations, data from a given sample may or may not be a "good" representation of a recognized typology. For example, a plot that falls into a transition area from mesic conditions to drier conditions likely will not represent a single "type" very well.  (More to come)     
+
 ```{r pressure, echo=FALSE, fig.cap="", out.width = '100%'}
-knitr::include_graphics("usnvc_crosswalk_table_draft_2022.png")
+knitr::include_graphics("usnvc_crosswalk_table_draft_revised_Jan2025.png")
 ```
